@@ -88,7 +88,7 @@ const Content = () => {
         />
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 p-6 rounded bg-white z-[1000] relative mt-12"
+          className="flex flex-col gap-4 p-6 rounded bg-white z-[1000] relative md:mt-12"
         >
           <Image
             src={images.logo}
@@ -98,7 +98,7 @@ const Content = () => {
             className="mx-auto block md:hidden"
           />
           <label className="flex flex-col manrope font-semibold text-sm">
-            Username or Email:
+            Username or Email
             <input
               type="text"
               {...register("identity", {
@@ -114,7 +114,7 @@ const Content = () => {
           </label>
 
           <label className="flex flex-col manrope font-semibold text-sm">
-            Password:
+            Password
             <input
               type="password"
               {...register("password", { required: "Password is required" })}
