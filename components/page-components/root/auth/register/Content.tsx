@@ -72,7 +72,7 @@ const Content = () => {
           className="w-full h-full object-cover fixed left-0 top-0"
         />
       </div>
-      <div className="w-full md:w-1/2 p-4">
+      <div className="w-full md:w-1/2 p-4 overflow-y-auto">
         <div className="block md:hidden fixed top-0 left-0 w-full h-full">
           <div className="bg-black/60 w-full h-full fixed z-10 top-0 left-0"></div>
           <Image
@@ -90,7 +90,7 @@ const Content = () => {
           className="flex flex-col gap-4 p-6 rounded bg-white z-[1000] relative"
         >
           <div>
-            <h2 className="manrope text-3xl font-semibold">Register</h2>
+            <h2 className="manrope text-3xl font-bold">Register</h2>
             <p className="mt-2 text-sm text-gray-600">
               Welcome to BANTAY enhancing disaster preparedness and minimizing
               risks to lives and property.
@@ -203,17 +203,6 @@ const Content = () => {
                 })}
                 className="border border-black/20 outline-none p-2  font-normal mt-2 bg-slate-100 w-full"
               />
-              {seePassword ? (
-                <icons.eyes.on
-                  className="absolute text-xl top-[17] right-2 cursor-pointer"
-                  onClick={() => setSeePassword(!seePassword)}
-                />
-              ) : (
-                <icons.eyes.off
-                  className="absolute text-xl top-[17] right-2 cursor-pointer"
-                  onClick={() => setSeePassword(!seePassword)}
-                />
-              )}
             </div>
             {errors.cpassword && (
               <span className="text-red-500 text-xs font-semibold">
