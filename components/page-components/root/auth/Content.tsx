@@ -46,13 +46,26 @@ const Content = () => {
 
   return (
     <section className="flex h-screen justify-between">
-      <div className="hidden md:block w-1/2 h-full relative">
+      <div className="hidden md:flex justify-center items-center w-1/2 h-full relative">
+        <div className="bg-black/70 w-full h-full absolute z-10 top-0 left-0"></div>
+        <div className="z-10 relative text-white px-8">
+          <h1 className="manrope text-7xl text-center font-bold uppercase">
+            Bantay
+          </h1>
+          <p className="text-gray-300 text-sm text-center mt-2">
+            Bantay is a landslide monitoring system designed to provide early
+            warnings and real-time data on slope stability. By utilizing
+            sensors, data analytics, and alerts, Bantay helps communities and
+            authorities detect potential landslides, enhancing disaster
+            preparedness and minimizing risks to lives and property.
+          </p>
+        </div>
         <Image
           src={images.login_banner}
           fill
           alt="banner"
           quality={100}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover fixed left-0 top-0"
         />
       </div>
       <div className="w-full md:w-1/2 p-4">
