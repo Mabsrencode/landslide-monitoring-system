@@ -107,7 +107,7 @@ const Content = () => {
               className="border border-black/20 outline-none p-2  font-normal mt-2 bg-slate-100"
             />
             {errors.identity && (
-              <span className="text-red-500 text-sm">
+              <span className="text-red-500 text-xs font-semibold">
                 {errors.identity.message}
               </span>
             )}
@@ -121,7 +121,7 @@ const Content = () => {
               className="border border-black/20 outline-none p-2  font-normal mt-2 bg-slate-100"
             />
             {errors.password && (
-              <span className="text-red-500 text-sm">
+              <span className="text-red-500 text-xs font-semibold">
                 {errors.password.message}
               </span>
             )}
@@ -129,13 +129,16 @@ const Content = () => {
           <div className="flex justify-between items-center w-full">
             <div className="flex gap-2 items-center">
               <input type="checkbox" id="remember_me" />{" "}
-              <label htmlFor="remember_me" className="manrope text-xs">
+              <label
+                htmlFor="remember_me"
+                className="manrope text-xs font-semibold text-gray-600 hover:text-black transition-all"
+              >
                 Remember me
               </label>
             </div>
             <Link
               href={"/forgot-password"}
-              className="manrope text-xs font-semibold underline"
+              className="manrope text-xs font-semibold underline text-gray-600 hover:text-black transition-all"
             >
               Forgot Password
             </Link>
@@ -143,7 +146,7 @@ const Content = () => {
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="button disabled:opacity-50 text-white"
+            className="button disabled:opacity-50 text-white transition-all"
           >
             {mutation.isPending ? "Logging in..." : "Login"}
           </button>
