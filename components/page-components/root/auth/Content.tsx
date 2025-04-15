@@ -103,6 +103,7 @@ const Content = () => {
             Username or Email
             <input
               type="text"
+              placeholder="example@gmail.com"
               {...register("identity", {
                 required: "Username or Email is required",
               })}
@@ -120,6 +121,7 @@ const Content = () => {
             <div className="relative w-full">
               <input
                 type={seePassword ? "text" : "password"}
+                placeholder="**************"
                 {...register("password", { required: "Password is required" })}
                 className="border border-black/20 outline-none p-2  font-normal mt-2 bg-slate-100 w-full"
               />
