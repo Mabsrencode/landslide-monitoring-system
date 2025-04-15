@@ -171,6 +171,15 @@ const Content = () => {
           >
             {mutation.isPending ? "Logging in..." : "Login"}
           </button>
+          <p className="text-xs text-right text-gray-600">
+            Don't Have An Account?{" "}
+            <Link
+              className="text-primary font-semibold hover:underline"
+              href={"/auth/register"}
+            >
+              Register
+            </Link>
+          </p>
         </form>
       </div>
     </section>
