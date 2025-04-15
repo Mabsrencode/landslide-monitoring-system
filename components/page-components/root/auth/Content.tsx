@@ -63,6 +63,8 @@ const Content = () => {
           </p>
         </div>
         <Image
+          placeholder="blur"
+          blurDataURL={images.login_banner}
           src={images.login_banner}
           fill
           alt="banner"
@@ -74,6 +76,8 @@ const Content = () => {
         <div className="block md:hidden fixed top-0 left-0 w-full h-full">
           <div className="bg-black/60 w-full h-full fixed z-10 top-0 left-0"></div>
           <Image
+            placeholder="blur"
+            blurDataURL={images.login_banner}
             src={images.login_banner}
             fill
             alt="banner"
