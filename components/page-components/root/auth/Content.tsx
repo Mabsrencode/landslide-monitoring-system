@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import images from "@/constants/images";
+import Link from "next/link";
 
 const login = async (data: FormData) => {
   const response = await fetch("/api/login", {
@@ -74,7 +75,7 @@ const Content = () => {
         />
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 p-6 border border-black/20 rounded bg-white z-[1000] relative mt-12"
+          className="flex flex-col gap-4 p-6 rounded bg-white z-[1000] relative mt-12"
         >
           <Image
             src={images.logo}
@@ -90,7 +91,7 @@ const Content = () => {
               {...register("identity", {
                 required: "Username or Email is required",
               })}
-              className="border border-black/20 outline-none p-2 rounded font-normal mt-2"
+              className="border border-black/20 outline-none p-2  font-normal mt-2 bg-slate-100"
             />
             {errors.identity && (
               <span className="text-red-500 text-sm">
@@ -104,7 +105,7 @@ const Content = () => {
             <input
               type="password"
               {...register("password", { required: "Password is required" })}
-              className="border border-black/20 outline-none p-2 rounded font-normal mt-2"
+              className="border border-black/20 outline-none p-2  font-normal mt-2 bg-slate-100"
             />
             {errors.password && (
               <span className="text-red-500 text-sm">
@@ -112,7 +113,20 @@ const Content = () => {
               </span>
             )}
           </label>
-
+          <div className="flex justify-between items-center w-full">
+            <div className="flex gap-2 items-center">
+              <input type="checkbox" id="remember_me" />{" "}
+              <label htmlFor="remember_me" className="manrope text-xs">
+                Remember me
+              </label>
+            </div>
+            <Link
+              href={"/forgot-password"}
+              className="manrope text-xs font-semibold underline"
+            >
+              Forgot Password
+            </Link>
+          </div>
           <button
             type="submit"
             disabled={mutation.isPending}
