@@ -81,7 +81,7 @@ const Content = () => {
             alt="logo"
             height={60}
             width={60}
-            className="mx-auto"
+            className="mx-auto block md:hidden"
           />
           <label className="flex flex-col manrope font-semibold text-sm">
             Username or Email:
