@@ -7,8 +7,8 @@ import images from "@/constants/images";
 import Link from "next/link";
 import icons from "@/constants/icons";
 
-const login = async (data: FormData) => {
-  const response = await fetch("/api/login", {
+const login = async (data: FormDataRegister) => {
+  const response = await fetch("/api/register", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -29,7 +29,7 @@ const Content = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<FormDataRegister>();
 
   const mutation = useMutation({
     mutationFn: login,
@@ -42,7 +42,7 @@ const Content = () => {
     },
   });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = (data: FormDataRegister) => {
     mutation.mutate(data);
   };
 
@@ -85,40 +85,85 @@ const Content = () => {
             className="w-full h-full object-cover"
           />
         </div>
-        <Image
-          src={images.logo}
-          alt="logo"
-          height={100}
-          width={100}
-          className="mx-auto"
-        />
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 p-6 rounded bg-white z-[1000] relative md:mt-12"
+          className="flex flex-col gap-4 p-6 rounded bg-white z-[1000] relative"
         >
-          <Image
-            src={images.logo}
-            alt="logo"
-            height={60}
-            width={60}
-            className="mx-auto block md:hidden"
-          />
-          <label className="flex flex-col manrope font-semibold text-sm relative">
-            Username or Email
-            <input
-              type="text"
-              placeholder="example@gmail.com"
-              {...register("identity", {
-                required: "Username or Email is required",
-              })}
-              className="border border-black/20 outline-none p-2  font-normal mt-2 bg-slate-100"
-            />
-            {errors.identity && (
-              <span className="text-red-500 text-xs font-semibold">
-                {errors.identity.message}
-              </span>
-            )}
-          </label>
+          <div>
+            <h2 className="manrope text-3xl font-semibold">Register</h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Welcome to BANTAY enhancing disaster preparedness and minimizing
+              risks to lives and property.
+            </p>
+          </div>
+          <div className="flex flex-col md:flex-row gap-4 w-full">
+            <label className="flex flex-col manrope font-semibold text-sm relative w-full">
+              Email
+              <input
+                type="text"
+                placeholder="example@gmail.com"
+                {...register("email", {
+                  required: "Email is required",
+                })}
+                className="border border-black/20 outline-none p-2  font-normal mt-2 bg-slate-100"
+              />
+              {errors.email && (
+                <span className="text-red-500 text-xs font-semibold">
+                  {errors.email.message}
+                </span>
+              )}
+            </label>
+            <label className="flex flex-col manrope font-semibold text-sm relative w-full">
+              Username
+              <input
+                type="text"
+                placeholder="Username"
+                {...register("username", {
+                  required: "Username is required",
+                })}
+                className="border border-black/20 outline-none p-2  font-normal mt-2 bg-slate-100"
+              />
+              {errors.username && (
+                <span className="text-red-500 text-xs font-semibold">
+                  {errors.username.message}
+                </span>
+              )}
+            </label>
+          </div>
+          <div className="flex flex-col md:flex-row gap-4 w-ful">
+            <label className="flex flex-col manrope font-semibold text-sm relative w-full">
+              First Name
+              <input
+                type="text"
+                placeholder="First Name"
+                {...register("firstName", {
+                  required: "First Name is required",
+                })}
+                className="border border-black/20 outline-none p-2  font-normal mt-2 bg-slate-100"
+              />
+              {errors.firstName && (
+                <span className="text-red-500 text-xs font-semibold">
+                  {errors.firstName.message}
+                </span>
+              )}
+            </label>
+            <label className="flex flex-col manrope font-semibold text-sm relative w-full">
+              Last Name
+              <input
+                type="text"
+                placeholder="Last Name"
+                {...register("lastName", {
+                  required: "Last Name is required",
+                })}
+                className="border border-black/20 outline-none p-2  font-normal mt-2 bg-slate-100"
+              />
+              {errors.lastName && (
+                <span className="text-red-500 text-xs font-semibold">
+                  {errors.lastName.message}
+                </span>
+              )}
+            </label>
+          </div>
 
           <label className="flex flex-col manrope font-semibold text-sm">
             Password
@@ -147,6 +192,35 @@ const Content = () => {
               </span>
             )}
           </label>
+          <label className="flex flex-col manrope font-semibold text-sm">
+            Confirm Password
+            <div className="relative w-full">
+              <input
+                type={seePassword ? "text" : "password"}
+                placeholder="**************"
+                {...register("cpassword", {
+                  required: "Confirm Password is required",
+                })}
+                className="border border-black/20 outline-none p-2  font-normal mt-2 bg-slate-100 w-full"
+              />
+              {seePassword ? (
+                <icons.eyes.on
+                  className="absolute text-xl top-[17] right-2 cursor-pointer"
+                  onClick={() => setSeePassword(!seePassword)}
+                />
+              ) : (
+                <icons.eyes.off
+                  className="absolute text-xl top-[17] right-2 cursor-pointer"
+                  onClick={() => setSeePassword(!seePassword)}
+                />
+              )}
+            </div>
+            {errors.cpassword && (
+              <span className="text-red-500 text-xs font-semibold">
+                {errors.cpassword.message}
+              </span>
+            )}
+          </label>
           <div className="flex justify-between items-center w-full">
             <div className="flex gap-2 items-center">
               <input type="checkbox" id="remember_me" />{" "}
@@ -157,12 +231,6 @@ const Content = () => {
                 Remember me
               </label>
             </div>
-            <Link
-              href={"/forgot-password"}
-              className="manrope text-xs font-semibold underline text-gray-600 hover:text-black transition-all"
-            >
-              Forgot Password
-            </Link>
           </div>
           <button
             type="submit"
@@ -172,12 +240,12 @@ const Content = () => {
             {mutation.isPending ? "Logging in..." : "Login"}
           </button>
           <p className="text-xs text-right text-gray-600">
-            Don&apos;t Have An Account?{" "}
+            Already Have An Account?{" "}
             <Link
               className="text-primary font-semibold hover:underline"
-              href={"/auth/register"}
+              href={"/auth/login"}
             >
-              Register
+              Login
             </Link>
           </p>
         </form>
