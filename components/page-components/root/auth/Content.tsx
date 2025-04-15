@@ -1,10 +1,11 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import images from "@/constants/images";
 import Link from "next/link";
+import icons from "@/constants/icons";
 
 const login = async (data: FormData) => {
   const response = await fetch("/api/login", {
@@ -23,6 +24,7 @@ const login = async (data: FormData) => {
 };
 
 const Content = () => {
+  const [seePassword, setSeePassword] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -97,7 +99,7 @@ const Content = () => {
             width={60}
             className="mx-auto block md:hidden"
           />
-          <label className="flex flex-col manrope font-semibold text-sm">
+          <label className="flex flex-col manrope font-semibold text-sm relative">
             Username or Email
             <input
               type="text"
@@ -115,11 +117,24 @@ const Content = () => {
 
           <label className="flex flex-col manrope font-semibold text-sm">
             Password
-            <input
-              type="password"
-              {...register("password", { required: "Password is required" })}
-              className="border border-black/20 outline-none p-2  font-normal mt-2 bg-slate-100"
-            />
+            <div className="relative w-full">
+              <input
+                type={seePassword ? "text" : "password"}
+                {...register("password", { required: "Password is required" })}
+                className="border border-black/20 outline-none p-2  font-normal mt-2 bg-slate-100 w-full"
+              />
+              {seePassword ? (
+                <icons.eyes.on
+                  className="absolute text-xl top-[17] right-2 cursor-pointer"
+                  onClick={() => setSeePassword(!seePassword)}
+                />
+              ) : (
+                <icons.eyes.off
+                  className="absolute text-xl top-[17] right-2 cursor-pointer"
+                  onClick={() => setSeePassword(!seePassword)}
+                />
+              )}
+            </div>
             {errors.password && (
               <span className="text-red-500 text-xs font-semibold">
                 {errors.password.message}
