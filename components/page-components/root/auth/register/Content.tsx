@@ -6,18 +6,18 @@ import Image from "next/image";
 import images from "@/constants/images";
 import Link from "next/link";
 import icons from "@/constants/icons";
+import toast from "react-hot-toast";
 
-const login = async (data: FormDataRegister) => {
-  const response = await fetch("/api/register", {
+const registerData = async (data: FormDataRegister) => {
+  const response = await fetch("/api/auth", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
   });
-
   if (!response.ok) {
-    throw new Error("Login failed");
+    throw new Error("Register failed");
   }
 
   return response.json();
@@ -28,17 +28,19 @@ const Content = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<FormDataRegister>();
+  const password = watch("password");
 
   const mutation = useMutation({
-    mutationFn: login,
+    mutationFn: registerData,
     onSuccess: (data) => {
-      console.log("Login success:", data);
-      alert("Logged in!");
+      toast.success(data.message);
     },
     onError: (err) => {
-      alert(err.message || "Something went wrong");
+      console.log(err);
+      toast.error(err.message || "Something went wrong");
     },
   });
 
@@ -215,6 +217,8 @@ const Content = () => {
                 placeholder="**************"
                 {...register("cpassword", {
                   required: "Confirm Password is required",
+                  validate: (value) =>
+                    value === password || "Passwords do not match",
                 })}
                 className="border border-black/20 outline-none p-2  font-normal mt-2 bg-slate-100 w-full"
               />
