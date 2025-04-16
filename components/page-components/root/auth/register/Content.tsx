@@ -164,7 +164,22 @@ const Content = () => {
               )}
             </label>
           </div>
-
+          <label className="flex flex-col manrope font-semibold text-sm relative w-full">
+            Contact Number
+            <input
+              type="text"
+              placeholder="Contact Number"
+              {...register("contactNumber", {
+                required: "Contact Number is required",
+              })}
+              className="border border-black/20 outline-none p-2  font-normal mt-2 bg-slate-100"
+            />
+            {errors.contactNumber && (
+              <span className="text-red-500 text-xs font-semibold">
+                {errors.contactNumber.message}
+              </span>
+            )}
+          </label>
           <label className="flex flex-col manrope font-semibold text-sm">
             Password
             <div className="relative w-full">
