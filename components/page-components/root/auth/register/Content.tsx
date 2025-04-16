@@ -16,11 +16,13 @@ const registerData = async (data: FormDataRegister) => {
     },
     body: JSON.stringify(data),
   });
-  if (!response.ok) {
-    throw new Error("Register failed");
-  }
 
-  return response.json();
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Register failed");
+  }
+  const result = await response.json();
+  return result;
 };
 
 const Content = () => {

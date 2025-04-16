@@ -30,7 +30,7 @@ export async function POST(req: Request) {
         uid: user.uid,
         message: "Registration successful",
       },
-      { status: 201 }
+      { status: 200 }
     );
   } catch (error) {
     console.error("Registration Error:", error);
