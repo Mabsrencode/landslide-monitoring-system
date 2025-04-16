@@ -41,10 +41,10 @@ export async function POST(request: Request) {
     });
 
     return response;
-  } catch (error: any) {
+  } catch (error) {
     console.error("Registration error:", error);
     return NextResponse.json(
-      { message: error.message || "Registration failed" },
+      { message: (error as Error).message || "Registration failed" },
       { status: 400 }
     );
   }

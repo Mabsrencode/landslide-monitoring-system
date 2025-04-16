@@ -7,6 +7,9 @@ export async function POST(request: Request) {
     const decodedToken = await adminAuth.verifyIdToken(token);
     return NextResponse.json({ valid: true, uid: decodedToken.uid });
   } catch (error) {
-    return NextResponse.json({ valid: false }, { status: 401 });
+    return NextResponse.json(
+      { message: (error as Error).message || "Verifying failed", valid: false },
+      { status: 401 }
+    );
   }
 }
