@@ -6,9 +6,11 @@ import Image from "next/image";
 import images from "@/constants/images";
 import Link from "next/link";
 import icons from "@/constants/icons";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const login = async (data: FormData) => {
-  const response = await fetch("/api/login", {
+  const response = await fetch("/api/auth/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -17,13 +19,15 @@ const login = async (data: FormData) => {
   });
 
   if (!response.ok) {
-    throw new Error("Login failed");
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Login failed");
   }
-
-  return response.json();
+  const result = await response.json();
+  return result;
 };
 
 const Content = () => {
+  const router = useRouter();
   const [seePassword, setSeePassword] = useState<boolean>(false);
   const {
     register,
@@ -34,11 +38,12 @@ const Content = () => {
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      console.log("Login success:", data);
-      alert("Logged in!");
+      toast.success(data.message);
+      router.refresh();
     },
     onError: (err) => {
-      alert(err.message || "Something went wrong");
+      console.log(err);
+      toast.error(err.message || "Something went wrong");
     },
   });
 
@@ -104,18 +109,18 @@ const Content = () => {
             className="mx-auto block md:hidden"
           />
           <label className="flex flex-col manrope font-semibold text-sm relative">
-            Username or Email
+            Email
             <input
               type="text"
               placeholder="example@gmail.com"
-              {...register("identity", {
-                required: "Username or Email is required",
+              {...register("email", {
+                required: "Email is required",
               })}
               className="border border-black/20 outline-none p-2  font-normal mt-2 bg-slate-100"
             />
-            {errors.identity && (
+            {errors.email && (
               <span className="text-red-500 text-xs font-semibold">
-                {errors.identity.message}
+                {errors.email.message}
               </span>
             )}
           </label>

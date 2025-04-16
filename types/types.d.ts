@@ -1,5 +1,5 @@
 interface FormData {
-  identity: string;
+  email: string;
   password: string;
 }
 

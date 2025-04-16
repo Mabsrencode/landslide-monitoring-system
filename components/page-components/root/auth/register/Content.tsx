@@ -7,9 +7,10 @@ import images from "@/constants/images";
 import Link from "next/link";
 import icons from "@/constants/icons";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const registerData = async (data: FormDataRegister) => {
-  const response = await fetch("/api/auth", {
+  const response = await fetch("/api/auth/register", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -26,6 +27,7 @@ const registerData = async (data: FormDataRegister) => {
 };
 
 const Content = () => {
+  const router = useRouter();
   const [seePassword, setSeePassword] = useState<boolean>(false);
   const {
     register,
@@ -39,6 +41,7 @@ const Content = () => {
     mutationFn: registerData,
     onSuccess: (data) => {
       toast.success(data.message);
+      router.refresh();
     },
     onError: (err) => {
       console.log(err);
