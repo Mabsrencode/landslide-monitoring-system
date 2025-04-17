@@ -1,5 +1,6 @@
 import { adminAuth } from "@/lib/firebase/admin";
 import { auth, db, doc, setDoc } from "@/lib/firebase/config";
+import { getFirebaseAuthError } from "@/utils/authErrors";
 import {
   applyActionCode,
   checkActionCode,
@@ -74,20 +75,8 @@ class AuthService {
       );
     } catch (error) {
       console.error("Registration error:", error);
-      let errorMessage = "Registration failed";
-      let statusCode = 400;
-
-      if ((error as { code: string }).code === "auth/email-already-in-use") {
-        errorMessage = "Email already in use";
-      } else if ((error as { code: string }).code === "auth/invalid-email") {
-        errorMessage = "Invalid email address";
-      } else if ((error as { code: string }).code === "auth/weak-password") {
-        errorMessage = "Password is too weak";
-      } else if (
-        (error as { code: string }).code === "auth/too-many-requests"
-      ) {
-        errorMessage = "Too many request, Please try again later.";
-      }
+      const { message: errorMessage, status: statusCode } =
+        getFirebaseAuthError((error as { code?: string })?.code ?? "");
       return NextResponse.json(
         { message: errorMessage },
         { status: statusCode }
@@ -130,22 +119,8 @@ class AuthService {
       return response;
     } catch (error) {
       console.error("Login error:", error);
-      let errorMessage = "Registration failed";
-      let statusCode = 400;
-
-      if ((error as { code: string }).code === "auth/invalid-email") {
-        errorMessage = "Invalid email address";
-      } else if ((error as { code: string }).code === "auth/weak-password") {
-        errorMessage = "Password is too weak";
-      } else if (
-        (error as { code: string }).code === "auth/too-many-requests"
-      ) {
-        errorMessage = "Too many request, Please try again later.";
-      } else if (
-        (error as { code: string }).code === "auth/invalid-credential"
-      ) {
-        errorMessage = "Invalid credentials please check your password";
-      }
+      const { message: errorMessage, status: statusCode } =
+        getFirebaseAuthError((error as { code?: string })?.code ?? "");
       return NextResponse.json(
         { message: errorMessage },
         { status: statusCode }
@@ -183,11 +158,8 @@ class AuthService {
       });
     } catch (error) {
       console.error("Verification error:", error);
-      let errorMessage = "Verifying email failed";
-      let statusCode = 400;
-      if ((error as { code: string }).code === "auth/too-many-requests") {
-        errorMessage = "Too many request, Please try again later.";
-      }
+      const { message: errorMessage, status: statusCode } =
+        getFirebaseAuthError((error as { code?: string })?.code ?? "");
       return NextResponse.json(
         { message: errorMessage },
         { status: statusCode }
@@ -215,11 +187,8 @@ class AuthService {
       }
     } catch (error) {
       console.error("Verification error:", error);
-      let errorMessage = "Sending email verification failed";
-      let statusCode = 400;
-      if ((error as { code: string }).code === "auth/too-many-requests") {
-        errorMessage = "Too many request, Please try again later.";
-      }
+      const { message: errorMessage, status: statusCode } =
+        getFirebaseAuthError((error as { code?: string })?.code ?? "");
       return NextResponse.json(
         { message: errorMessage },
         { status: statusCode }
