@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
@@ -39,7 +39,8 @@ export default function VerifyEmailPage() {
       setError(err.message || "Email verification failed");
     },
   });
-  const verify = useCallback(() => {
+
+  useEffect(() => {
     const oobCode = searchParams.get("oobCode");
 
     if (!oobCode) {
@@ -49,11 +50,7 @@ export default function VerifyEmailPage() {
     }
 
     verifyEmailMutation.mutate(oobCode);
-  }, [searchParams, verifyEmailMutation]);
-
-  useEffect(() => {
-    verify();
-  }, [verify]);
+  }, [searchParams]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
