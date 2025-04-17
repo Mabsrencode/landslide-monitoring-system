@@ -16,7 +16,13 @@ export function getFirebaseAuthError(code: FirebaseAuthErrorCode) {
       message = "Too many requests. Please try again later.";
       break;
     case "auth/invalid-credential":
-      message = "Invalid credentials, please check your password";
+      message = "Invalid credentials, please check your email or password";
+      break;
+    case "auth/expired-action-code":
+      message = "The reset link has expired. Please request a new one.";
+      break;
+    case "auth/invalid-action-code":
+      message = "Invalid reset link. Please request a new one.";
       break;
   }
 

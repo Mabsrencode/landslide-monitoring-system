@@ -163,7 +163,7 @@ const Content = () => {
               </label>
             </div>
             <Link
-              href={"/forgot-password"}
+              href={"/auth/forgot-password"}
               className="manrope text-xs font-semibold underline text-gray-600 hover:text-black transition-all"
             >
               Forgot Password

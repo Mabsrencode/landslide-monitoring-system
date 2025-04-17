@@ -32,6 +32,14 @@ export async function POST(
       const { email, password } = await request.json();
       return await authService.resendVerification(email, password);
     }
+    if (path.includes("forgot-password")) {
+      const { email } = await request.json();
+      return await authService.sendPasswordResetEmail(email);
+    }
+    if (path.includes("reset-password")) {
+      const { oobCode, newPassword } = await request.json();
+      return await authService.confirmPasswordReset(oobCode, newPassword);
+    }
 
     return NextResponse.json({ message: "Invalid path" }, { status: 400 });
   } catch (error) {

@@ -4,4 +4,6 @@ declare type FirebaseAuthErrorCode =
   | "auth/weak-password"
   | "auth/too-many-requests"
   | "auth/invalid-credential"
+  | "auth/expired-action-code"
+  | "auth/invalid-action-code"
   | string;

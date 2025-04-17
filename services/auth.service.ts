@@ -1,11 +1,14 @@
 import { adminAuth } from "@/lib/firebase/admin";
 import { auth, db, doc, setDoc } from "@/lib/firebase/config";
-import { getFirebaseAuthError } from "@/utils/authErrors";
+import { nowISOString } from "@/utils/date";
+import { jsonRes, errorRes } from "@/utils/auth/authApiResponse";
 import {
   applyActionCode,
   checkActionCode,
+  confirmPasswordReset,
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { NextResponse } from "next/server";
@@ -61,26 +64,18 @@ class AuthService {
         contactNumber,
         emailVerified: false,
         status: "pending_verification",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: nowISOString,
+        updatedAt: nowISOString,
       });
 
       await sendEmailVerification(user);
-      return NextResponse.json(
-        {
-          message: "Verification email sent. Please check your inbox.",
-          requiresVerification: true,
-        },
-        { status: 200 }
-      );
+      return jsonRes({
+        message: "Verification email sent. Please check your inbox.",
+        requiresVerification: true,
+      });
     } catch (error) {
       console.error("Registration error:", error);
-      const { message: errorMessage, status: statusCode } =
-        getFirebaseAuthError((error as { code?: string })?.code ?? "");
-      return NextResponse.json(
-        { message: errorMessage },
-        { status: statusCode }
-      );
+      return errorRes(error);
     }
   };
   public login = async (email: string, password: string) => {
@@ -94,13 +89,13 @@ class AuthService {
 
       if (!user.emailVerified) {
         await sendEmailVerification(user);
-        return NextResponse.json(
+        return jsonRes(
           {
             message:
               "Email not verified. A new verification link has been sent.",
             requiresVerification: true,
           },
-          { status: 401 }
+          401
         );
       }
 
@@ -119,12 +114,7 @@ class AuthService {
       return response;
     } catch (error) {
       console.error("Login error:", error);
-      const { message: errorMessage, status: statusCode } =
-        getFirebaseAuthError((error as { code?: string })?.code ?? "");
-      return NextResponse.json(
-        { message: errorMessage },
-        { status: statusCode }
-      );
+      return errorRes(error);
     }
   };
   public verifyEmail = async (oobCode: string) => {
@@ -147,23 +137,18 @@ class AuthService {
         {
           emailVerified: true,
           status: "active",
-          updatedAt: new Date().toISOString(),
+          updatedAt: nowISOString,
         },
         { merge: true }
       );
 
-      return NextResponse.json({
+      return jsonRes({
         success: true,
         message: "Email verified successfully. You can now login.",
       });
     } catch (error) {
       console.error("Verification error:", error);
-      const { message: errorMessage, status: statusCode } =
-        getFirebaseAuthError((error as { code?: string })?.code ?? "");
-      return NextResponse.json(
-        { message: errorMessage },
-        { status: statusCode }
-      );
+      return errorRes(error);
     }
   };
   public resendVerification = async (email: string, password: string) => {
@@ -177,22 +162,64 @@ class AuthService {
 
       if (!user.emailVerified) {
         await sendEmailVerification(user);
+        return jsonRes({
+          message: "A new verification link has been sent.",
+          requiresVerification: true,
+        });
+      }
+      return jsonRes({ message: "Email already verified" });
+    } catch (error) {
+      console.error("Resend verification error:", error);
+      return errorRes(error);
+    }
+  };
+
+  public sendPasswordResetEmail = async (email: string) => {
+    try {
+      if (!email) {
         return NextResponse.json(
-          {
-            message: "A new verification link has been sent.",
-            requiresVerification: true,
-          },
-          { status: 200 }
+          { message: "Email is required" },
+          { status: 400 }
         );
       }
+
+      await sendPasswordResetEmail(auth, email);
+      return jsonRes({
+        message: "Password reset email sent. Please check your inbox.",
+      });
     } catch (error) {
-      console.error("Verification error:", error);
-      const { message: errorMessage, status: statusCode } =
-        getFirebaseAuthError((error as { code?: string })?.code ?? "");
-      return NextResponse.json(
-        { message: errorMessage },
-        { status: statusCode }
-      );
+      console.error("Password reset error:", error);
+      return errorRes(error);
+    }
+  };
+  public confirmPasswordReset = async (
+    oobCode: string,
+    newPassword: string
+  ) => {
+    try {
+      if (!oobCode || !newPassword) {
+        return NextResponse.json(
+          { message: "Reset code and new password are required" },
+          { status: 400 }
+        );
+      }
+
+      if (newPassword.length < 6) {
+        return NextResponse.json(
+          { message: "Password must be at least 6 characters" },
+          { status: 400 }
+        );
+      }
+
+      await confirmPasswordReset(auth, oobCode, newPassword);
+      return jsonRes({
+        success: true,
+        message:
+          "Password reset successfully. You can now login with your new password.",
+      });
+    } catch (error) {
+      console.error("Password reset confirmation error:", error);
+      return errorRes(error);
     }
   };
 }

@@ -6,7 +6,13 @@ import PublicSidebar from "@/components/common/PublicSidebar/PublicSidebar";
 import { Toaster } from "react-hot-toast";
 const queryClient = new QueryClient();
 
-const publicRoutes = ["/auth/login", "/auth/register", "/auth/verify-email"];
+const publicRoutes = [
+  "/auth/login",
+  "/auth/register",
+  "/auth/verify-email",
+  "/auth/forgot-password",
+  "/auth/reset-password",
+];
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const isPublicRoute = publicRoutes.includes(pathname);
