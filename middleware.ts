@@ -1,16 +1,16 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const publicRoutes = ["/auth/login", "/auth/register"];
+const publicRoutes = ["/auth/login", "/auth/register", "/auth/verify-email"];
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isPublicRoute = publicRoutes.includes(path);
   const token = request.cookies.get("bantay-access-tk")?.value;
-
   if (!isPublicRoute && !token) {
     return NextResponse.redirect(new URL("/auth/login", request.nextUrl));
   }
+
   if (isPublicRoute && token) {
     return NextResponse.redirect(new URL("/", request.nextUrl));
   }
@@ -24,7 +24,6 @@ export async function middleware(request: NextRequest) {
         },
         body: JSON.stringify({ token }),
       });
-
       const { valid } = await verificationResponse.json();
 
       if (!valid) {

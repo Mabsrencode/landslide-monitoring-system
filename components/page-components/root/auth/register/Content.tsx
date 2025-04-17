@@ -9,26 +9,11 @@ import icons from "@/constants/icons";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
-const registerData = async (data: FormDataRegister) => {
-  const response = await fetch("/api/auth/register", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Register failed");
-  }
-  const result = await response.json();
-  return result;
-};
-
 const Content = () => {
   const router = useRouter();
-  const [seePassword, setSeePassword] = useState<boolean>(false);
+  const [seePassword, setSeePassword] = useState(false);
+  const [verificationSent, setVerificationSent] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -36,16 +21,66 @@ const Content = () => {
     formState: { errors },
   } = useForm<FormDataRegister>();
   const password = watch("password");
-
+  const email = watch("email");
   const mutation = useMutation({
-    mutationFn: registerData,
+    mutationFn: async (data: FormDataRegister) => {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.log(errorData);
+        throw new Error(errorData.message || "Register failed");
+      }
+      return await response.json();
+    },
     onSuccess: (data) => {
-      toast.success(data.message);
-      router.refresh();
+      if (data.requiresVerification) {
+        setVerificationSent(true);
+        toast.success(data.message);
+      } else {
+        toast.success("Registration successful!");
+        router.push("/");
+      }
     },
     onError: (err) => {
       console.log(err);
-      toast.error(err.message || "Something went wrong");
+      toast.error(err.message || "Registration failed");
+    },
+  });
+  const resendVerification = useMutation({
+    mutationFn: async ({
+      email,
+      password,
+    }: {
+      email: string;
+      password: string;
+    }) => {
+      const response = await fetch("/api/auth/resend-verification-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.message || "Resending verification email failed"
+        );
+      }
+      return await response.json();
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
+    onError: (err) => {
+      console.log(err);
+      toast.error(err.message || "Resending verification email failed");
     },
   });
 
@@ -55,6 +90,38 @@ const Content = () => {
 
   return (
     <section className="flex h-screen justify-between">
+      {verificationSent && (
+        <div className="fixed inset-0 bg-black/50 z-[2000] flex items-center justify-center w-full h-full">
+          <div className="bg-white p-8 rounded-lg max-w-md">
+            <h2 className="text-xl font-bold mb-4">Verify Your Email</h2>
+            <p className="mb-4">
+              We&apos;ve sent a verification link to your email address. Please
+              check your inbox and click the link to complete registration.
+            </p>
+            <p className="text-sm text-gray-600 mb-4">
+              Didn&apos;t receive the email? Check your spam folder or
+              <button
+                onClick={() => resendVerification.mutate({ email, password })}
+                className="text-blue-500 ml-1 flex gap-2 items-center"
+              >
+                resend verification email
+                {resendVerification.isPending && (
+                  <span className="h-[12px] w-[12px] border-2 border-gray-700 rounded-full block border-t-white animate-spin"></span>
+                )}
+              </button>
+            </p>
+            <button
+              onClick={() => {
+                setVerificationSent(false);
+                router.push("/auth/login");
+              }}
+              className="w-full bg-primary text-white py-2 rounded"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
       <div className="hidden md:flex justify-center items-center w-1/2 h-full relative">
         <div className="bg-black/70 w-full h-full absolute z-10 top-0 left-0"></div>
         <div className="z-10 relative text-white px-8">

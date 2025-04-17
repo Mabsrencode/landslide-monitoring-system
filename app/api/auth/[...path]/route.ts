@@ -24,6 +24,14 @@ export async function POST(
       const { email, password } = await request.json();
       return await authService.login(email, password);
     }
+    if (path.includes("verify-email")) {
+      const { oobCode } = await request.json();
+      return authService.verifyEmail(oobCode);
+    }
+    if (path.includes("resend-verification-email")) {
+      const { email, password } = await request.json();
+      return await authService.resendVerification(email, password);
+    }
 
     return NextResponse.json({ message: "Invalid path" }, { status: 400 });
   } catch (error) {
