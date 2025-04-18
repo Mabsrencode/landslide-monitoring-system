@@ -64,8 +64,8 @@ class AuthService {
         contactNumber,
         emailVerified: false,
         status: "pending_verification",
-        createdAt: nowISOString,
-        updatedAt: nowISOString,
+        createdAt: nowISOString(),
+        updatedAt: nowISOString(),
       });
 
       await sendEmailVerification(user);
@@ -137,7 +137,7 @@ class AuthService {
         {
           emailVerified: true,
           status: "active",
-          updatedAt: nowISOString,
+          updatedAt: nowISOString(),
         },
         { merge: true }
       );

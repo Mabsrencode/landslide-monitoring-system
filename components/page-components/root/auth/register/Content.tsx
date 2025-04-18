@@ -317,7 +317,7 @@ const Content = () => {
             disabled={mutation.isPending}
             className="button disabled:opacity-50 text-white transition-all"
           >
-            {mutation.isPending ? "Logging in..." : "Login"}
+            {mutation.isPending ? "Registering..." : "Register"}
           </button>
           <p className="text-xs text-right text-gray-600">
             Already Have An Account?{" "}

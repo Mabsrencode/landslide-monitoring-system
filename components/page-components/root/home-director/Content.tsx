@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import MainLoader from "@/components/reusable/MainLoader/MainLoader";
 
 export default function Content() {
   const router = useRouter();
@@ -30,5 +31,5 @@ export default function Content() {
     }
   }, [router, searchParams]);
 
-  return null;
+  return <MainLoader />;
 }
