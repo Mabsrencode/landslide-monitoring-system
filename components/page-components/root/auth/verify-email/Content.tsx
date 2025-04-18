@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
+import SpinnerLoader from "@/components/reusable/SpinnerLoader/SpinnerLoader";
 
 export default function VerifyEmailPage() {
   const router = useRouter();
@@ -60,9 +61,9 @@ export default function VerifyEmailPage() {
         </h1>
 
         {status === "verifying" && (
-          <div className="text-center">
+          <div className="text-center flex flex-col items-center justify-center gap-4">
             <p>Verifying your email address...</p>
-            <div className="mt-4 animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto" />
+            <SpinnerLoader />
           </div>
         )}
 
