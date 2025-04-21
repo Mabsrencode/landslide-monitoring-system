@@ -13,9 +13,27 @@ import {
 import { evaluateLandslideRisk } from "@/utils/monitoring/riskEvaluator";
 
 const sensorHistory = [
-  { time: "10:00", vibration: 0.8, soilMoisture: 70 },
-  { time: "10:30", vibration: 1.1, soilMoisture: 75 },
-  { time: "11:00", vibration: 1.8, soilMoisture: 85 },
+  {
+    time: "10:00",
+    vibration: 0.8,
+    soilMoisture: 70,
+    temperature: 65,
+    humidity: 78,
+  },
+  {
+    time: "10:30",
+    vibration: 1.1,
+    soilMoisture: 75,
+    temperature: 65,
+    humidity: 78,
+  },
+  {
+    time: "11:00",
+    vibration: 1.8,
+    soilMoisture: 85,
+    temperature: 65,
+    humidity: 78,
+  },
 ];
 const dummySensorData = {
   vibration: 1.8,
@@ -61,32 +79,81 @@ const Content = () => {
           </li>
         </ul>
       </div>
-      <div className="mt-4 space-y-6">
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="p-4 border border-black/20 rounded">
-            <h3 className="font-semibold text-lg mb-2">
-              Soil & Vibration History
-            </h3>
-            <LineChart width={400} height={250} data={sensorHistory}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="time" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="soilMoisture"
-                stroke="#8884d8"
-                name="Soil Moisture"
-              />
-              <Line
-                type="monotone"
-                dataKey="vibration"
-                stroke="#82ca9d"
-                name="Vibration"
-              />
-            </LineChart>
-          </div>
+      <div className="mt-4 space-y-6 p-4 border border-black/20 rounded">
+        <h3 className="font-semibold text-lg mb-2">History</h3>
+        <div className="grid grid-cols-2 w-full gap-4">
+          <LineChart
+            width={400}
+            height={250}
+            data={sensorHistory}
+            className="border border-black/20 w-full p-2 rounded"
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="time" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="soilMoisture"
+              stroke="#8884d8"
+              name="Soil Moisture"
+            />
+          </LineChart>
+          <LineChart
+            width={400}
+            height={250}
+            data={sensorHistory}
+            className="border border-black/20 w-full p-2 rounded"
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="time" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="vibration"
+              stroke="#8884d8"
+              name="Vibration"
+            />
+          </LineChart>
+          <LineChart
+            width={400}
+            height={250}
+            data={sensorHistory}
+            className="border border-black/20 w-full p-2 rounded"
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="time" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="humidity"
+              stroke="#8884d8"
+              name="Humidity"
+            />
+          </LineChart>
+          <LineChart
+            width={400}
+            height={250}
+            data={sensorHistory}
+            className="border border-black/20 w-full p-2 rounded"
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="time" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="temperature"
+              stroke="#8884d8"
+              name="Temperature"
+            />
+          </LineChart>
         </div>
       </div>
     </section>

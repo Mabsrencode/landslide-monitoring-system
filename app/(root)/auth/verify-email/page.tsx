@@ -1,9 +1,10 @@
 import React, { Suspense } from "react";
 import Content from "@/components/page-components/root/auth/verify-email/Content";
+import MainLoader from "@/components/reusable/MainLoader/MainLoader";
 
 const Page = () => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<MainLoader />}>
       <Content />
     </Suspense>
   );
