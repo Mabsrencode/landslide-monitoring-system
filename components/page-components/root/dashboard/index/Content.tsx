@@ -11,6 +11,10 @@ import {
   Legend,
 } from "recharts";
 import { evaluateLandslideRisk } from "@/utils/monitoring/riskEvaluator";
+import {
+  BreakPointHooks,
+  breakpointsTailwind,
+} from "@react-hooks-library/core";
 
 const sensorHistory = [
   {
@@ -43,6 +47,17 @@ const dummySensorData = {
 };
 
 const Content = () => {
+  const { useGreater, useBetween, useSmaller } =
+    BreakPointHooks(breakpointsTailwind);
+  const greater = useGreater("md");
+  const between = useBetween("md", "lg");
+  const smaller = useSmaller("2xl");
+  const chartWidth = (() => {
+    if (greater) return 700;
+    if (between) return 500;
+    if (smaller) return 400;
+    return 230;
+  })();
   const riskLevel = evaluateLandslideRisk(dummySensorData);
   const riskColor = {
     High: "bg-red-500",
@@ -81,9 +96,9 @@ const Content = () => {
       </div>
       <div className="mt-4 space-y-6 p-4 border border-black/20 rounded">
         <h3 className="font-semibold text-lg mb-2">History</h3>
-        <div className="grid grid-cols-2 w-full gap-4">
+        <div className="grid md:grid-cols-2 w-full gap-4">
           <LineChart
-            width={400}
+            width={chartWidth}
             height={250}
             data={sensorHistory}
             className="border border-black/20 w-full p-2 rounded"
@@ -101,7 +116,7 @@ const Content = () => {
             />
           </LineChart>
           <LineChart
-            width={400}
+            width={chartWidth}
             height={250}
             data={sensorHistory}
             className="border border-black/20 w-full p-2 rounded"
@@ -119,7 +134,7 @@ const Content = () => {
             />
           </LineChart>
           <LineChart
-            width={400}
+            width={chartWidth}
             height={250}
             data={sensorHistory}
             className="border border-black/20 w-full p-2 rounded"
@@ -137,7 +152,7 @@ const Content = () => {
             />
           </LineChart>
           <LineChart
-            width={400}
+            width={chartWidth}
             height={250}
             data={sensorHistory}
             className="border border-black/20 w-full p-2 rounded"
