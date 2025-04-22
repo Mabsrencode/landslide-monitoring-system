@@ -77,7 +77,7 @@ const Content = () => {
           className="w-full h-full object-cover fixed left-0 top-0"
         />
       </div>
-      <div className="w-full md:w-1/2 p-4">
+      <div className="w-full md:w-1/2 p-4 flex flex-col items-center justify-center">
         <div className="block md:hidden fixed top-0 left-0 w-full h-full">
           <div className="bg-black/60 w-full h-full fixed z-10 top-0 left-0"></div>
           <Image
@@ -90,16 +90,20 @@ const Content = () => {
             className="w-full h-full object-cover"
           />
         </div>
-        <Image
-          src={images.logo}
-          alt="logo"
-          height={100}
-          width={100}
-          className="mx-auto"
-        />
+        <div className="mx-auto hidden md:flex gap-2 items-center">
+          <Image src={images.logo} alt="logo" height={100} width={100} />
+          <div>
+            <h2 className="text-primary font-semibold text-5xl uppercase manrope">
+              Bantay
+            </h2>
+            <span className="text-gray-600 tracking-[13px] font-stretch-100% text-base uppercase">
+              Landslide
+            </span>
+          </div>
+        </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 p-6 rounded bg-white z-[1000] relative md:mt-12"
+          className="flex flex-col gap-4 p-6 rounded bg-white z-[1000] relative md:mt-12 w-full"
         >
           <Image
             src={images.logo}

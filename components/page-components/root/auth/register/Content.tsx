@@ -146,7 +146,7 @@ const Content = () => {
           className="w-full h-full object-cover fixed left-0 top-0"
         />
       </div>
-      <div className="w-full md:w-1/2 p-4 overflow-y-auto">
+      <div className="w-full md:w-1/2 p-4 overflow-y-auto md:flex flex-col justify-center items-center">
         <div className="block md:hidden fixed top-0 left-0 w-full h-full">
           <div className="bg-black/60 w-full h-full fixed z-10 top-0 left-0"></div>
           <Image
@@ -161,7 +161,7 @@ const Content = () => {
         </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 p-6 rounded bg-white z-[1000] relative"
+          className="flex flex-col gap-4 p-6 rounded bg-white z-[1000] relative w-full"
         >
           <div>
             <h2 className="manrope text-3xl font-bold">Register</h2>
@@ -170,7 +170,7 @@ const Content = () => {
               risks to lives and property.
             </p>
           </div>
-          <div className="flex flex-col md:flex-row gap-4 w-full">
+          <div className="flex flex-col lg:flex-row gap-4 w-full">
             <label className="flex flex-col manrope font-semibold text-sm relative w-full">
               Email
               <input
@@ -204,7 +204,7 @@ const Content = () => {
               )}
             </label>
           </div>
-          <div className="flex flex-col md:flex-row gap-4 w-ful">
+          <div className="flex flex-col lg:flex-row gap-4 w-ful">
             <label className="flex flex-col manrope font-semibold text-sm relative w-full">
               First Name
               <input
