@@ -13,7 +13,7 @@ const Content = () => {
   const router = useRouter();
   const [seePassword, setSeePassword] = useState(false);
   const [verificationSent, setVerificationSent] = useState(false);
-
+  const [isCheckTerms, setIsCheckTerms] = useState(false);
   const {
     register,
     handleSubmit,
@@ -161,7 +161,7 @@ const Content = () => {
         </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 p-6 rounded bg-white z-[1000] relative w-full"
+          className="flex flex-col gap-4 p-6 rounded bg-white z-[1000] relative w-full md:mt-12"
         >
           <div>
             <h2 className="manrope text-3xl font-bold">Register</h2>
@@ -303,7 +303,11 @@ const Content = () => {
           </label>
           <div className="flex justify-between items-center w-full">
             <div className="flex gap-2 items-center">
-              <input type="checkbox" id="remember_me" />{" "}
+              <input
+                onChange={(e) => setIsCheckTerms(e.target.checked)}
+                type="checkbox"
+                id="remember_me"
+              />{" "}
               <label
                 htmlFor="remember_me"
                 className="manrope text-xs font-semibold text-gray-600 hover:text-black transition-all"
@@ -314,7 +318,7 @@ const Content = () => {
           </div>
           <button
             type="submit"
-            disabled={mutation.isPending}
+            disabled={mutation.isPending || !isCheckTerms}
             className="button disabled:opacity-50 text-white transition-all"
           >
             {mutation.isPending ? "Registering..." : "Register"}

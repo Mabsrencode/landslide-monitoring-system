@@ -39,5 +39,10 @@ body {
     background-color: var(--primary-color);
     opacity: 0.8;
   }
+  &:disabled {
+    background-color: var(--primary-color);
+    opacity: 0.5;
+    cursor: not-allowed !important;
+  }
   cursor: pointer;
 }
