@@ -1,12 +1,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { User } from "firebase/auth";
 
 interface AuthState {
-  user: User | null;
+  user: UserCredential | null;
   isLoading: boolean;
   error: string | null;
-  setUser: (user: User | null) => void;
+  setUser: (user: UserCredential | null) => void;
   setIsLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
 }
@@ -22,7 +21,7 @@ export const useAuthStore = create<AuthState>()(
       setError: (error) => set({ error }),
     }),
     {
-      name: "auth-storage",
+      name: "bantay-auth-storage",
     }
   )
 );

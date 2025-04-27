@@ -8,7 +8,7 @@ import Link from "next/link";
 import icons from "@/constants/icons";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-
+import { useAuthStore } from "@/stores/authStore";
 const login = async (data: FormData) => {
   const response = await fetch("/api/auth/login", {
     method: "POST",
@@ -17,7 +17,6 @@ const login = async (data: FormData) => {
     },
     body: JSON.stringify(data),
   });
-
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || "Login failed");
@@ -27,6 +26,7 @@ const login = async (data: FormData) => {
 };
 
 const Content = () => {
+  const { setUser } = useAuthStore.getState();
   const router = useRouter();
   const [seePassword, setSeePassword] = useState<boolean>(false);
   const {
@@ -37,9 +37,11 @@ const Content = () => {
 
   const mutation = useMutation({
     mutationFn: login,
-    onSuccess: (data) => {
+    onSuccess: (data: AuthLoginResponse) => {
+      console.log(data);
+      setUser(data.data);
       toast.success(data.message);
-      router.refresh();
+      router.push("/");
     },
     onError: (err) => {
       console.log(err);

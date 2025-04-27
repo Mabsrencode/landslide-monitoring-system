@@ -101,7 +101,16 @@ class AuthService {
 
       const token = await user.getIdToken();
       const response = NextResponse.json(
-        { message: "Login successful" },
+        {
+          message: "Login successful",
+          data: {
+            email: user.email,
+            name: user.displayName,
+            id: user.uid,
+            profileImage: user.photoURL,
+            emailVerified: user.emailVerified,
+          },
+        },
         { status: 200 }
       );
       response.cookies.set("bantay-access-tk", token, {
@@ -222,6 +231,19 @@ class AuthService {
       return errorRes(error);
     }
   };
-}
 
+  public logout = async () => {
+    try {
+      await auth.signOut();
+      const response = NextResponse.json(
+        { message: "Logout successful" },
+        { status: 200 }
+      );
+      response.cookies.delete("bantay-access-tk");
+    } catch (error) {
+      console.error("Logout error:", error);
+      return errorRes(error);
+    }
+  };
+}
 export default AuthService;

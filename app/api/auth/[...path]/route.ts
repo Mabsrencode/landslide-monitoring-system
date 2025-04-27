@@ -40,6 +40,9 @@ export async function POST(
       const { oobCode, newPassword } = await request.json();
       return await authService.confirmPasswordReset(oobCode, newPassword);
     }
+    if (path.includes("logout")) {
+      return await authService.logout();
+    }
 
     return NextResponse.json({ message: "Invalid path" }, { status: 400 });
   } catch (error) {

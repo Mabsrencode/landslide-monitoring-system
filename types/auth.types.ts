@@ -7,3 +7,15 @@ declare type FirebaseAuthErrorCode =
   | "auth/expired-action-code"
   | "auth/invalid-action-code"
   | string;
+
+interface UserCredential {
+  email: string;
+  name: string | null;
+  id: string;
+  profileImage: string;
+  emailVerified: boolean;
+}
+declare type AuthLoginResponse = {
+  message: string;
+  data: UserCredential | null;
+};

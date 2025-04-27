@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import "./style.css";
 import { LuLogs } from "react-icons/lu";
@@ -11,6 +12,11 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import images from "@/constants/images";
+import { useAuthStore } from "@/stores/authStore";
+import { IoIosClose } from "react-icons/io";
+import { useMutation } from "@tanstack/react-query";
+import SpinnerLoader from "@/components/reusable/SpinnerLoader/SpinnerLoader";
+import toast from "react-hot-toast";
 const navigationItems = [
   {
     link: "/dashboard",
@@ -28,9 +34,33 @@ const navigationItems = [
     icon: <CiWarning />,
   },
 ];
+const handleLogOut = async () => {
+  const response = await fetch("/api/auth/logout", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Logout failed");
+  }
+  const result = await response.json();
+  return result;
+};
 const PrivateSidebar = () => {
+  const [openProfileContainer, setOpenProfileContainer] = useState(false);
+  const { user } = useAuthStore();
   const pathname = usePathname();
   const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(false);
+  const logOutMutation = useMutation({
+    mutationFn: handleLogOut,
+    onSuccess: () => {
+      toast.success("Logged out successfully");
+    },
+    onError: (error) => {
+      toast.error(`Logout error: ${(error as Error).message}`);
+    },
+  });
   return (
     <aside
       className={`sticky z-[1000] top-0 py-6 transition-all bg-white text-white h-screen flex flex-col justify-between items-center ${
@@ -82,25 +112,25 @@ const PrivateSidebar = () => {
         </nav>
       </div>
       <div>
-        {/* <div className="relative w-full">
-          {data && data.user?.email ? (
+        <div className="relative w-full">
+          {user && user && user.emailVerified ? (
             <div className="relative">
               <div
                 onClick={() => setOpenProfileContainer(!openProfileContainer)}
-                className="flex justify-center items-center bg-green-700 text-3xl rounded-full h-11 w-11 hover:bg-green-600 cursor-pointer transition-all"
+                className="flex justify-center items-center bg-primary text-3xl rounded-full h-11 w-11 hover:bg-primary/70 cursor-pointer transition-all"
               >
-                <h3> {data.user.email.split("")[0].toUpperCase()}</h3>
+                <h3> {user.email.split("")[0].toUpperCase()}</h3>
               </div>
             </div>
           ) : (
             <div className="rounded-full h-11 w-11 bg-gray-400 animate-pulse"></div>
           )}
-        </div> */}
-        {/* {openProfileContainer && data && data.user?.email && (
+        </div>
+        {openProfileContainer && user && user.email && (
           <div className="absolute bg-white rounded-lg bottom-6 left-14 w-[300px]">
             <div className="relative p-3">
               <h3 className="text-sm text-black w-[230px] font-bold text-ellipsis overflow-hidden">
-                {data.user.email}
+                {user.email}
               </h3>
               <IoIosClose
                 onClick={() => setOpenProfileContainer(false)}
@@ -110,7 +140,7 @@ const PrivateSidebar = () => {
                 <li>
                   <Link
                     className="py-1 hover:font-bold block border-t"
-                    to={"account-details"}
+                    href={"/profile/account-details"}
                   >
                     Account Details
                   </Link>
@@ -118,7 +148,7 @@ const PrivateSidebar = () => {
                 <li>
                   <Link
                     className="py-1 hover:font-bold block border-t"
-                    to={"notifications"}
+                    href={"/profile/notifications"}
                   >
                     Notifications & reports
                   </Link>
@@ -126,7 +156,7 @@ const PrivateSidebar = () => {
                 <li>
                   <Link
                     className="py-1 hover:font-bold block border-t border-b"
-                    to={"security"}
+                    href={"/profile/security"}
                   >
                     Security
                   </Link>
@@ -134,15 +164,16 @@ const PrivateSidebar = () => {
               </ul>
               <div className="w-full mt-4">
                 <button
-                  onClick={handleLogOut}
-                  className="text-sm mx-auto block px-12 py-2 bg-green-700 hover:bg-green-700/70 rounded cursor-pointer"
+                  disabled={logOutMutation.isPending}
+                  onClick={() => logOutMutation.mutate()}
+                  className="text-sm mx-auto block px-12 py-2 bg-primary disable:bg-primary/70 hover:bg-primary/70 rounded cursor-pointer"
                 >
-                  Log out
+                  {logOutMutation.isPending ? <SpinnerLoader /> : "Log out"}
                 </button>
               </div>
             </div>
           </div>
-        )} */}
+        )}
         <div className="mt-12 text-gray-700 hover:text-black">
           {!isSideBarOpen ? (
             <TbLayoutSidebarLeftExpandFilled

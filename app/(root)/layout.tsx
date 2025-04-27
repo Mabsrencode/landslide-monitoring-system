@@ -20,8 +20,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <main className="min-h-screen">
       <Toaster position="bottom-right" reverseOrder={false} />
       <div className={`${!isPublicRoute && "flex"} h-full`}>
-        {!isPublicRoute && <PrivateSidebar />}
         <QueryClientProvider client={queryClient}>
+          {!isPublicRoute && <PrivateSidebar />}
           {children}
         </QueryClientProvider>
       </div>
