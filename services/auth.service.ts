@@ -12,6 +12,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 class AuthService {
   private static instance: AuthService;
@@ -234,12 +235,15 @@ class AuthService {
 
   public logout = async () => {
     try {
-      await auth.signOut();
+      const result = await auth.signOut();
+      console.log(result);
       const response = NextResponse.json(
         { message: "Logout successful" },
         { status: 200 }
       );
-      response.cookies.delete("bantay-access-tk");
+      const cookieStore = await cookies();
+      cookieStore.delete("bantay-access-tk");
+      return jsonRes({ message: "Logout successful" });
     } catch (error) {
       console.error("Logout error:", error);
       return errorRes(error);

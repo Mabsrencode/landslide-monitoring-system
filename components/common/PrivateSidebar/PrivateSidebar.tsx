@@ -8,7 +8,7 @@ import {
   TbLayoutSidebarRightExpandFilled,
 } from "react-icons/tb";
 import { CiWarning } from "react-icons/ci";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import images from "@/constants/images";
@@ -48,14 +48,17 @@ const handleLogOut = async () => {
   return result;
 };
 const PrivateSidebar = () => {
+  const router = useRouter();
   const [openProfileContainer, setOpenProfileContainer] = useState(false);
-  const { user } = useAuthStore();
+  const { user, setUser } = useAuthStore();
   const pathname = usePathname();
   const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(false);
   const logOutMutation = useMutation({
     mutationFn: handleLogOut,
     onSuccess: () => {
+      setUser(null);
       toast.success("Logged out successfully");
+      router.push("/auth/login");
     },
     onError: (error) => {
       toast.error(`Logout error: ${(error as Error).message}`);
