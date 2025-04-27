@@ -38,7 +38,6 @@ const Content = () => {
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: (data: AuthLoginResponse) => {
-      console.log(data);
       setUser(data.data);
       toast.success(data.message);
       router.push("/");

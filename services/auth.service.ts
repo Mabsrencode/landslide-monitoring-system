@@ -235,15 +235,10 @@ class AuthService {
 
   public logout = async () => {
     try {
-      const result = await auth.signOut();
-      console.log(result);
-      const response = NextResponse.json(
-        { message: "Logout successful" },
-        { status: 200 }
-      );
+      await auth.signOut();
       const cookieStore = await cookies();
       cookieStore.delete("bantay-access-tk");
-      return jsonRes({ message: "Logout successful" });
+      return jsonRes({ message: "Logout successful" }, 200);
     } catch (error) {
       console.error("Logout error:", error);
       return errorRes(error);
