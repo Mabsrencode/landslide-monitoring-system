@@ -1,5 +1,5 @@
 import { adminAuth } from "@/lib/firebase/admin";
-import { auth, db, doc, firebaseConfig, setDoc } from "@/lib/firebase/config";
+import { auth, db, doc, setDoc } from "@/lib/firebase/config";
 import { nowISOString } from "@/utils/date";
 import { jsonRes, errorRes } from "@/utils/auth/authApiResponse";
 import {
@@ -7,11 +7,9 @@ import {
   checkActionCode,
   confirmPasswordReset,
   createUserWithEmailAndPassword,
-  RecaptchaVerifier,
   sendEmailVerification,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
-  signInWithPhoneNumber,
 } from "firebase/auth";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
@@ -24,76 +22,6 @@ class AuthService {
     }
     return AuthService.instance;
   };
-  public sendOtp = async (phoneNumber: string, recaptchaToken: string) => {
-    try {
-      if (!phoneNumber) {
-        return NextResponse.json(
-          { message: "Phone number is required" },
-          { status: 400 }
-        );
-      }
-
-      const response = await fetch(
-        `https://identitytoolkit.googleapis.com/v1/accounts:sendVerificationCode?key=${firebaseConfig.apiKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            phoneNumber,
-            recaptchaToken,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.error) {
-        throw new Error(data.error.message);
-      }
-
-      return jsonRes({
-        success: true,
-        message: "OTP sent successfully.",
-        sessionInfo: data.sessionInfo,
-      });
-    } catch (error) {
-      console.error("Send OTP error:", error);
-      return errorRes(error);
-    }
-  };
-
-  public verifyOtp = async (sessionInfo: string, code: string) => {
-    try {
-      const response = await fetch(
-        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPhoneNumber?key=${firebaseConfig.apiKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sessionInfo,
-            code,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.error) {
-        throw new Error(data.error.message);
-      }
-
-      return jsonRes({
-        success: true,
-        idToken: data.idToken,
-        phoneNumber: data.phoneNumber,
-        message: "OTP verified successfully.",
-      });
-    } catch (error) {
-      console.error("Verify OTP error:", error);
-      return errorRes(error);
-    }
-  };
-
   public register = async (
     email: string,
     password: string,
