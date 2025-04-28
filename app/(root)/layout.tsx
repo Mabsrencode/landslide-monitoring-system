@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import PrivateSidebar from "@/components/common/PrivateSidebar/PrivateSidebar";
+import { RecaptchaProvider } from "@/components/page-components/root/auth/register/RecaptchaProvider/RecaptchaProvider";
 const queryClient = new QueryClient();
 
 const publicRoutes = [
@@ -22,7 +23,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <div className={`${!isPublicRoute && "flex"} h-full`}>
         <QueryClientProvider client={queryClient}>
           {!isPublicRoute && <PrivateSidebar />}
-          {children}
+          <RecaptchaProvider>{children}</RecaptchaProvider>
         </QueryClientProvider>
       </div>
     </main>

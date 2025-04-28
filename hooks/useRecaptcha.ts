@@ -1,54 +1,41 @@
-import { useEffect, useState } from "react";
+"use client";
 
-declare global {
-  interface Window {
-    grecaptcha?: {
-      ready: (callback: () => void) => void;
-      execute: (
-        siteKey: string,
-        options: { action: string }
-      ) => Promise<string>;
-    };
-  }
-}
+import { useState, useEffect } from "react";
 
 export const useRecaptcha = () => {
-  const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const loadRecaptcha = () => {
-      const script = document.createElement("script");
-      script.src = `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`;
-      script.async = true;
-      script.defer = true;
-      script.onload = () => setRecaptchaLoaded(true);
-      document.body.appendChild(script);
+    const checkRecaptcha = () => {
+      if (window.grecaptcha) {
+        setIsReady(true);
+      }
     };
+    checkRecaptcha();
+    const interval = setInterval(checkRecaptcha, 100);
 
-    if (!window.grecaptcha) {
-      loadRecaptcha();
-    } else {
-      setRecaptchaLoaded(true);
-    }
+    return () => clearInterval(interval);
   }, []);
 
-  const getRecaptchaToken = async (action: string) => {
-    if (!recaptchaLoaded) {
-      throw new Error("reCAPTCHA not loaded yet");
-    }
+  const getToken = async (action: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      if (!isReady) {
+        reject(new Error("reCAPTCHA not ready"));
+        return;
+      }
 
-    return new Promise<string>((resolve, reject) => {
       window.grecaptcha?.ready(async () => {
         try {
-          if (window.grecaptcha) {
-            const token = await window.grecaptcha.execute(
-              process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!,
-              { action }
-            );
-            resolve(token);
-          } else {
+          if (!window.grecaptcha) {
             reject(new Error("reCAPTCHA not available"));
+            return;
           }
+
+          const token = await window.grecaptcha.execute(
+            process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!,
+            { action }
+          );
+          resolve(token);
         } catch (error) {
           reject(error);
         }
@@ -56,5 +43,5 @@ export const useRecaptcha = () => {
     });
   };
 
-  return { getRecaptchaToken, recaptchaLoaded };
+  return { getToken, isReady };
 };

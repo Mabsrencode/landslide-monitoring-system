@@ -28,7 +28,7 @@ const Content = () => {
   const [seePassword, setSeePassword] = useState(false);
   const [verificationSent, setVerificationSent] = useState(false);
   const [isCheckTerms, setIsCheckTerms] = useState(false);
-  const { getRecaptchaToken, recaptchaLoaded } = useRecaptcha();
+  const { getToken, isReady } = useRecaptcha();
   const {
     register,
     handleSubmit,
@@ -43,24 +43,27 @@ const Content = () => {
 
   const sendOtpMutation = useMutation({
     mutationFn: async ({ phoneNumber }: { phoneNumber: string }) => {
-      if (!recaptchaLoaded) {
-        throw new Error("reCAPTCHA is still loading. Please try again.");
-      }
+      try {
+        const token = await getToken("sendOtp");
+        const response = await fetch("/api/auth/send-otp", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ phoneNumber, recaptchaToken: token }),
+        });
 
-      const recaptchaToken = await getRecaptchaToken("sendOtp");
-      const response = await fetch("/api/auth/send-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ phoneNumber, recaptchaToken }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Sending OTP failed");
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Sending OTP failed");
+        }
+        return await response.json();
+      } catch (error) {
+        console.error("reCAPTCHA error:", error);
+        throw new Error(
+          "Failed to verify you're not a robot. Please try again."
+        );
       }
-      return await response.json();
     },
     onSuccess: (data) => {
       toast.success(data.message);
@@ -300,14 +303,14 @@ const Content = () => {
               {phoneNumber && phoneNumber.length > 0 && (
                 <button
                   type="button"
-                  disabled={sendOtpMutation.isPending || !recaptchaLoaded}
+                  disabled={sendOtpMutation.isPending || !isReady}
                   className="button text-nowrap text-white font-semibold"
                   onClick={() => sendOtpMutation.mutate({ phoneNumber })}
                 >
                   {sendOtpMutation.isPending ? (
                     <SpinnerLoader variant="small" />
-                  ) : !recaptchaLoaded ? (
-                    "Loading reCAPTCHA..."
+                  ) : !isReady ? (
+                    "Loading security check..."
                   ) : (
                     "Send OTP"
                   )}
