@@ -66,7 +66,7 @@ const PrivateSidebar = () => {
   });
   return (
     <aside
-      className={`sticky z-[1000] top-0 py-6 transition-all bg-white text-white h-screen flex flex-col justify-between items-center ${
+      className={`sticky z-[1000] top-0 left-0 py-6 transition-all bg-white text-white h-screen flex flex-col justify-between items-center ${
         isSideBarOpen ? "w-[150px]" : "w-[60px]"
       } border-r border-black/10 shadow`}
     >

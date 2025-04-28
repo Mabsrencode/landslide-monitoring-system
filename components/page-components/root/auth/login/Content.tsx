@@ -40,7 +40,7 @@ const Content = () => {
     onSuccess: (data: AuthLoginResponse) => {
       setUser(data.data);
       toast.success(data.message);
-      router.push("/");
+      router.push("/dashboard");
     },
     onError: (err) => {
       console.log(err);

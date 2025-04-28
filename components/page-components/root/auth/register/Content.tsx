@@ -1,5 +1,17 @@
 "use client";
 import React, { useState } from "react";
+
+declare global {
+  interface Window {
+    grecaptcha?: {
+      ready: (callback: () => void) => void;
+      execute: (
+        siteKey: string,
+        options: { action: string }
+      ) => Promise<string>;
+    };
+  }
+}
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
@@ -8,20 +20,56 @@ import Link from "next/link";
 import icons from "@/constants/icons";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import SpinnerLoader from "@/components/reusable/SpinnerLoader/SpinnerLoader";
+import { useRecaptcha } from "@/hooks/useRecaptcha";
 
 const Content = () => {
   const router = useRouter();
   const [seePassword, setSeePassword] = useState(false);
   const [verificationSent, setVerificationSent] = useState(false);
   const [isCheckTerms, setIsCheckTerms] = useState(false);
+  const { getRecaptchaToken, recaptchaLoaded } = useRecaptcha();
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm<FormDataRegister>();
-  const password = watch("password");
-  const email = watch("email");
+  const [password, email, phoneNumber] = watch([
+    "password",
+    "email",
+    "contactNumber",
+  ]);
+
+  const sendOtpMutation = useMutation({
+    mutationFn: async ({ phoneNumber }: { phoneNumber: string }) => {
+      if (!recaptchaLoaded) {
+        throw new Error("reCAPTCHA is still loading. Please try again.");
+      }
+
+      const recaptchaToken = await getRecaptchaToken("sendOtp");
+      const response = await fetch("/api/auth/send-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ phoneNumber, recaptchaToken }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Sending OTP failed");
+      }
+      return await response.json();
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
+    onError: (err) => {
+      console.log(err);
+      toast.error(err.message || "Sending OTP failed");
+    },
+  });
   const mutation = useMutation({
     mutationFn: async (data: FormDataRegister) => {
       const response = await fetch("/api/auth/register", {
@@ -240,14 +288,32 @@ const Content = () => {
           </div>
           <label className="flex flex-col manrope font-semibold text-sm relative w-full">
             Contact Number
-            <input
-              type="text"
-              placeholder="Contact Number"
-              {...register("contactNumber", {
-                required: "Contact Number is required",
-              })}
-              className="border border-black/20 outline-none p-2  font-normal mt-2 bg-slate-100"
-            />
+            <div className="flex items-center w-full gap-2 mt-2">
+              <input
+                type="text"
+                placeholder="Contact Number"
+                {...register("contactNumber", {
+                  required: "Contact Number is required",
+                })}
+                className="border border-black/20 outline-none p-2  font-normal bg-slate-100 w-full"
+              />
+              {phoneNumber && phoneNumber.length > 0 && (
+                <button
+                  type="button"
+                  disabled={sendOtpMutation.isPending || !recaptchaLoaded}
+                  className="button text-nowrap text-white font-semibold"
+                  onClick={() => sendOtpMutation.mutate({ phoneNumber })}
+                >
+                  {sendOtpMutation.isPending ? (
+                    <SpinnerLoader variant="small" />
+                  ) : !recaptchaLoaded ? (
+                    "Loading reCAPTCHA..."
+                  ) : (
+                    "Send OTP"
+                  )}
+                </button>
+              )}
+            </div>
             {errors.contactNumber && (
               <span className="text-red-500 text-xs font-semibold">
                 {errors.contactNumber.message}

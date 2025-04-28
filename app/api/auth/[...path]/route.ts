@@ -8,6 +8,10 @@ export async function POST(
   const authService = AuthService.getInstance();
   try {
     const { path } = await params;
+    if (path.includes("send-otp")) {
+      const { phoneNumber, recaptchaToken } = await request.json();
+      return await authService.sendOtp(phoneNumber, recaptchaToken);
+    }
     if (path.includes("register")) {
       const { email, password, username, firstName, lastName, contactNumber } =
         await request.json();
