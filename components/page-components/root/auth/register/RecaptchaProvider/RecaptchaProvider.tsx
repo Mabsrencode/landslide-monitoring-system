@@ -1,5 +1,6 @@
 "use client";
 
+import environment from "@/constants/environment";
 import { useEffect } from "react";
 
 declare global {
@@ -24,7 +25,7 @@ export const RecaptchaProvider = ({
       if (window.grecaptcha) return;
 
       const script = document.createElement("script");
-      script.src = `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`;
+      script.src = `https://www.google.com/recaptcha/api.js?render=${environment.recaptchaSiteKey}`;
       script.async = true;
       script.defer = true;
       document.body.appendChild(script);

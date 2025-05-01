@@ -310,9 +310,22 @@ const Content = () => {
               />{" "}
               <label
                 htmlFor="remember_me"
-                className="manrope text-xs font-semibold text-gray-600 hover:text-black transition-all"
+                className="manrope text-xs text-gray-600 transition-all"
               >
-                Remember me
+                I accept the{" "}
+                <span className="text-secondary font-semibold">
+                  <Link href={"/terms-&-use"} className="hover:text-primary">
+                    {" "}
+                    Terms of Use{" "}
+                  </Link>
+                  <span className="text-gray-600 font-normal">&</span>{" "}
+                  <Link
+                    href={"/privacy-&-policy"}
+                    className="hover:text-primary"
+                  >
+                    Privacy Policy
+                  </Link>
+                </span>
               </label>
             </div>
           </div>

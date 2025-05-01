@@ -1,5 +1,6 @@
 "use client";
 
+import environment from "@/constants/environment";
 import { useState, useEffect } from "react";
 
 export const useRecaptcha = () => {
@@ -32,7 +33,7 @@ export const useRecaptcha = () => {
           }
 
           const token = await window.grecaptcha.execute(
-            process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!,
+            environment.recaptchaSiteKey!,
             { action }
           );
           resolve(token);

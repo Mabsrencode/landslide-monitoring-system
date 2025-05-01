@@ -64,6 +64,7 @@ class AuthService {
         lastName,
         contactNumber,
         emailVerified: false,
+        role: "user",
         status: "pending_verification",
         createdAt: nowISOString(),
         updatedAt: nowISOString(),
@@ -241,6 +242,22 @@ class AuthService {
       return jsonRes({ message: "Logout successful" }, 200);
     } catch (error) {
       console.error("Logout error:", error);
+      return errorRes(error);
+    }
+  };
+  public auditLogs = async (actor: string, action: string, details: string) => {
+    try {
+      await setDoc(doc(db, "logs"), {
+        actor: actor,
+        action: action,
+        details: details,
+      });
+      return jsonRes({
+        success: true,
+        message: "Successfully created action logs.",
+      });
+    } catch (error) {
+      console.error("Creating action logs error:", error);
       return errorRes(error);
     }
   };
