@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import { usePathname } from "next/navigation";
 import Link from "next/link";
 const otherLinks = [
   {
@@ -17,18 +16,14 @@ const otherLinks = [
   },
 ];
 const OthersLink = () => {
-  const pathname = usePathname();
   return (
     <div className="w-full md:w-1/3 max-h-min bg-slate-100 rounded p-4 border border-black/10">
       <h3 className="manrope text-2xl text-semibold text-black">Others</h3>
       <ul className="mt-4">
         {otherLinks.map((link, index) => (
-          <div>
+          <div key={index}>
             <div className="h-[1px] w-full bg-black/10" />
-            <li
-              key={index}
-              className="hover:bg-secondary transition-all hover:text-white"
-            >
+            <li className="hover:bg-secondary transition-all hover:text-white">
               <Link href={link.link} className="p-2 block">
                 {link.title}
               </Link>
