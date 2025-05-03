@@ -3,14 +3,10 @@ import {
   auth,
   db,
   doc,
-  getDownloadURL,
-  getStorage,
-  ref,
   sendEmailVerification,
   updateDoc,
   updateEmail,
   updateProfile,
-  uploadBytes,
 } from "@/lib/firebase/config";
 import { errorRes, jsonRes } from "@/utils/auth/authApiResponse";
 import { nowISOString } from "@/utils/date";
@@ -35,10 +31,8 @@ class UserService {
   ) => {
     try {
       const userRecord = await adminAuth.getUser(uid);
-      const storage = getStorage();
       let updates: Record<string, any> = {};
       let authUpdates: Record<string, any> = {};
-
       if (data.profileImage === null) {
         updates.profileImage = null;
         authUpdates.photoURL = null;
@@ -46,18 +40,8 @@ class UserService {
         data.profileImage &&
         data.profileImage.startsWith("data:image")
       ) {
-        const base64Data = data.profileImage.split(",")[1];
-        const buffer = Buffer.from(base64Data, "base64");
-        const storageRef = ref(storage, `profileImages/${uid}`);
-        await uploadBytes(storageRef, buffer, {
-          contentType:
-            data.profileImage.match(/^data:(.*);base64/)?.[1] || "image/jpeg",
-        });
-        const downloadURL = await getDownloadURL(storageRef);
-        updates.profileImage = downloadURL;
-        authUpdates.photoURL = downloadURL;
+        updates.profileImage = data.profileImage;
       }
-
       if (data.firstName || data.lastName) {
         updates.firstName =
           data.firstName || userRecord.displayName?.split(" ")[0];
@@ -107,7 +91,7 @@ class UserService {
         profileImage: updates.profileImage,
       });
     } catch (error) {
-      console.error("Updating Profile error:", error);
+      console.error("Profile update error:", error);
       return errorRes(error);
     }
   };

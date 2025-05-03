@@ -8,7 +8,7 @@ const Content = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mt-12">
         <div className="border border-black/10 p-2 rounded bg-gray-200 text-left">
           <h2 className="text-2xl manrope font-semibold">Account Details</h2>
-          <p className="text-gray-700">
+          <p className="text-gray-700 text-sm">
             Manage your profile info, and use the same info across the system.
           </p>
           <span className="mt-6 flex flex-wrap gap-4">
@@ -28,7 +28,7 @@ const Content = () => {
         </div>
         <div className="border border-black/10 p-2 rounded bg-gray-200">
           <h2 className="text-2xl manrope font-semibold">Notifications</h2>
-          <p className="text-gray-700">
+          <p className="text-gray-700 text-sm">
             Stay informed with real-time alerts on ground movement, rainfall
             thresholds, and early warning signs to help prevent disasters.
           </p>

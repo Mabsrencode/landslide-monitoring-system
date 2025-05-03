@@ -116,13 +116,17 @@ const PrivateSidebar = () => {
       </div>
       <div>
         <div className="relative w-full">
-          {user && user && user.emailVerified ? (
+          {user ? (
             <div className="relative">
               <div
                 onClick={() => setOpenProfileContainer(!openProfileContainer)}
                 className="flex justify-center items-center bg-primary text-3xl rounded-full h-11 w-11 hover:bg-primary/70 cursor-pointer transition-all"
               >
-                <h3> {user.email.split("")[0].toUpperCase()}</h3>
+                {user && user.profileImage && user.name ? (
+                  <Image src={user.profileImage} fill alt={user.name} />
+                ) : (
+                  <h3> {user.email.split("")[0].toUpperCase()}</h3>
+                )}
               </div>
             </div>
           ) : (
@@ -142,6 +146,9 @@ const PrivateSidebar = () => {
               <ul className="text-black text-base my-2">
                 <li>
                   <Link
+                    onClick={() =>
+                      setOpenProfileContainer(!openProfileContainer)
+                    }
                     className="py-1 hover:font-bold block border-t"
                     href={"/settings"}
                   >
