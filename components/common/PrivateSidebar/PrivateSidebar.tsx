@@ -130,7 +130,7 @@ const PrivateSidebar = () => {
           )}
         </div>
         {openProfileContainer && user && user.email && (
-          <div className="absolute bg-white rounded-lg bottom-6 left-14 w-[300px]">
+          <div className="absolute bg-white border border-black/10 shadow rounded-lg bottom-6 left-14 w-[300px]">
             <div className="relative p-3">
               <h3 className="text-sm text-black w-[230px] font-bold text-ellipsis overflow-hidden">
                 {user.email}
@@ -143,25 +143,9 @@ const PrivateSidebar = () => {
                 <li>
                   <Link
                     className="py-1 hover:font-bold block border-t"
-                    href={"/profile/account-details"}
+                    href={"/settings"}
                   >
-                    Account Details
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className="py-1 hover:font-bold block border-t"
-                    href={"/profile/notifications"}
-                  >
-                    Notifications & reports
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className="py-1 hover:font-bold block border-t border-b"
-                    href={"/profile/security"}
-                  >
-                    Security
+                    Settings
                   </Link>
                 </li>
               </ul>
