@@ -1,5 +1,5 @@
 import { adminAuth } from "@/lib/firebase/admin";
-import { auth, db, doc, setDoc } from "@/lib/firebase/config";
+import { auth, db, doc, getDoc, setDoc } from "@/lib/firebase/config";
 import { nowISOString } from "@/utils/date";
 import { jsonRes, errorRes } from "@/utils/auth/authApiResponse";
 import {
@@ -101,15 +101,20 @@ class AuthService {
         );
       }
 
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      const userData = userDoc.data();
+
       const token = await user.getIdToken();
       const response = NextResponse.json(
         {
           message: "Login successful",
           data: {
             email: user.email,
-            name: user.displayName,
+            name: userData?.firstName + " " + userData?.lastName,
+            firstName: userData?.firstName,
+            lastName: userData?.lastName,
             id: user.uid,
-            profileImage: user.photoURL,
+            profileImage: userData?.profileImage || null,
             emailVerified: user.emailVerified,
           },
         },

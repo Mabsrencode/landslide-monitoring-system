@@ -1,6 +1,18 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+import {
+  getAuth,
+  updateEmail,
+  sendEmailVerification,
+  updateProfile,
+} from "firebase/auth";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+} from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
   authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -15,4 +27,20 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-export { app, auth, db, doc, setDoc, firebaseConfig };
+export {
+  app,
+  auth,
+  db,
+  doc,
+  setDoc,
+  getDoc,
+  firebaseConfig,
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  updateDoc,
+  updateEmail,
+  sendEmailVerification,
+  updateProfile,
+};

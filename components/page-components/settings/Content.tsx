@@ -13,14 +13,14 @@ const Content = () => {
           </p>
           <span className="mt-6 flex flex-wrap gap-4">
             <Link
-              href={"/settings/account-details/personal-info"}
-              className="flex-1 text-center bg-primary p-2 rounded text-white font-medium"
+              href={"/settings/account-details/personal-information"}
+              className="flex-1 text-center bg-primary p-2 rounded text-white font-medium hover:bg-primary/70 transition-all"
             >
               Personal Information
             </Link>
             <Link
               href={"/settings/account-details/security"}
-              className="flex-1 text-center bg-primary p-2 rounded text-white font-medium"
+              className="flex-1 text-center bg-primary p-2 rounded text-white font-medium hover:bg-primary/70 transition-all"
             >
               Password & Security
             </Link>
@@ -35,18 +35,12 @@ const Content = () => {
           <span className="mt-6 flex flex-wrap gap-4">
             <Link
               href={"/settings/notifications"}
-              className="flex-1 text-center bg-primary p-2 rounded text-white font-medium"
+              className="flex-1 text-center bg-primary p-2 rounded text-white font-medium hover:bg-primary/70 transition-all"
             >
-              Password & Security
+              Manage Notification
             </Link>
           </span>
         </div>
-        <Link
-          href={"/settings/notifications"}
-          className="col-span-2 row-start-2 border border-black/10 p-2 rounded bg-gray-200"
-        >
-          3
-        </Link>
       </div>
     </section>
   );
