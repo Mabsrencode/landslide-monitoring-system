@@ -21,7 +21,7 @@ const SpinnerLoader: React.FC<SpinnerVariant> = ({ variant }) => {
 
   return (
     <div
-      className={`${sizeClass} border-3 border-primary rounded-full border-t-white animate-spin bg-blend-difference`}
+      className={`${sizeClass} border-3 border-white rounded-full border-t-transparent animate-spin bg-blend-difference`}
     ></div>
   );
 };
