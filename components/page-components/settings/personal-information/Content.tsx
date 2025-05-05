@@ -147,7 +147,7 @@ const Content = () => {
     <section className="container mx-auto p-4 flex flex-col items-center justify-center">
       <button
         onClick={() => router.back()}
-        className="bg-secondary px-3 py-1 text-sm rounded self-start mb-12 font-medium text-white flex items-center gap-1 cursor-pointer"
+        className="bg-primary px-3 py-1 text-sm rounded self-start mb-12 font-medium text-white flex items-center gap-1 cursor-pointer"
       >
         <IoIosArrowBack /> Back
       </button>
@@ -158,7 +158,7 @@ const Content = () => {
         >
           <div className="flex flex-col items-center">
             <div className="relative group">
-              <div className="w-32 h-32 rounded-full border-2 border-secondary overflow-hidden relative">
+              <div className="w-32 h-32 rounded-full bg-primary border-2 border-secondary overflow-hidden relative">
                 {previewImage ? (
                   <Image
                     src={previewImage}
@@ -186,7 +186,7 @@ const Content = () => {
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="p-2 bg-primary text-white rounded-full hover:bg-primary/80 transition"
+                    className="p-2 bg-gray-200 text-black rounded-full hover:bg-gray-300 transition"
                     title="Change photo"
                   >
                     <CiEdit size={18} />
@@ -291,7 +291,7 @@ const Content = () => {
             ) : (
               <div
                 onClick={() => setIsEditing(!isEditing)}
-                className="w-full bg-primary hover:cursor-pointer text-white py-2 px-4 hover:bg-primary/70 transition disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
+                className="button text-white text-center"
               >
                 Edit Profile
               </div>
