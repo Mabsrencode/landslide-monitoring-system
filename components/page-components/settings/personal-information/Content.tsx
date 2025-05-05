@@ -144,7 +144,7 @@ const Content = () => {
   if (!user) return <MainLoader />;
 
   return (
-    <section className="container mx-auto p-4 flex flex-col items-center justify-center">
+    <section className="container mx-auto p-4 flex flex-col">
       <button
         onClick={() => router.back()}
         className="bg-primary px-3 py-1 text-sm rounded self-start mb-12 font-medium text-white flex items-center gap-1 cursor-pointer"
