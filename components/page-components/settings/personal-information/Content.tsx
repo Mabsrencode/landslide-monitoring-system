@@ -9,11 +9,9 @@ import SpinnerLoader from "@/components/reusable/SpinnerLoader/SpinnerLoader";
 import { toast } from "react-hot-toast";
 import { useEffect, useRef, useState } from "react";
 import MainLoader from "@/components/reusable/MainLoader/MainLoader";
-import { useRouter } from "next/navigation";
-import { IoIosArrowBack } from "react-icons/io";
 import OthersLink from "../OthersLink/OthersLink";
+import BackRoute from "@/components/reusable/BackRoute/BackRoute";
 const Content = () => {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const { user, setUser } = useAuthStore() as {
     user: ExtendedUserCredential;
@@ -145,12 +143,7 @@ const Content = () => {
 
   return (
     <section className="container mx-auto p-4 flex flex-col">
-      <button
-        onClick={() => router.back()}
-        className="bg-primary px-3 py-1 text-sm rounded self-start mb-12 font-medium text-white flex items-center gap-1 cursor-pointer"
-      >
-        <IoIosArrowBack /> Back
-      </button>
+      <BackRoute />
       <div className="flex flex-col md:flex-row gap-4 w-full">
         <form
           onSubmit={handleSubmit(onSubmit)}
