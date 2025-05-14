@@ -34,25 +34,26 @@ const navigationItems = [
     icon: <CiWarning />,
   },
 ];
-const handleLogOut = async () => {
-  const response = await fetch("/api/auth/logout", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  if (!response.ok) {
-    throw new Error("Logout failed");
-  }
-  const result = await response.json();
-  return result;
-};
 const PrivateSidebar = () => {
   const router = useRouter();
   const [openProfileContainer, setOpenProfileContainer] = useState(false);
   const { user, setUser } = useAuthStore();
   const pathname = usePathname();
   const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(false);
+  const handleLogOut = async () => {
+    const response = await fetch("/api/auth/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: user?.email }),
+    });
+    if (!response.ok) {
+      throw new Error("Logout failed");
+    }
+    const result = await response.json();
+    return result;
+  };
   const logOutMutation = useMutation({
     mutationFn: handleLogOut,
     onSuccess: () => {

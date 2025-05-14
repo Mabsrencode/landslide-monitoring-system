@@ -2,6 +2,7 @@ import { adminAuth } from "@/lib/firebase/admin";
 import { auth, db, doc, getDoc, setDoc } from "@/lib/firebase/config";
 import { nowISOString } from "@/utils/date";
 import { jsonRes, errorRes } from "@/utils/auth/authApiResponse";
+import { v4 as uuidv4 } from "uuid";
 import {
   applyActionCode,
   checkActionCode,
@@ -13,6 +14,7 @@ import {
 } from "firebase/auth";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { uniqueId } from "lodash-es";
 
 class AuthService {
   private static instance: AuthService;
@@ -239,7 +241,7 @@ class AuthService {
     }
   };
 
-  public logout = async () => {
+  public logout = async (email: string) => {
     try {
       await auth.signOut();
       const cookieStore = await cookies();
@@ -252,11 +254,13 @@ class AuthService {
   };
   public auditLogs = async (actor: string, action: string, details: string) => {
     try {
-      await setDoc(doc(db, "logs"), {
+      await setDoc(doc(db, "logs", uuidv4()), {
         actor: actor,
         action: action,
         details: details,
+        createdAt: nowISOString(),
       });
+
       return jsonRes({
         success: true,
         message: "Successfully created action logs.",

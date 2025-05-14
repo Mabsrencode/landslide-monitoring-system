@@ -11,6 +11,11 @@ export async function POST(
     if (path.includes("register")) {
       const { email, password, username, firstName, lastName, contactNumber } =
         await request.json();
+      await authService.auditLogs(
+        email,
+        "Register",
+        `${email} has been register.`
+      );
       return await authService.register(
         email,
         password,
@@ -22,6 +27,7 @@ export async function POST(
     }
     if (path.includes("login")) {
       const { email, password } = await request.json();
+      await authService.auditLogs(email, "Login", `${email} has been login.`);
       return await authService.login(email, password);
     }
     if (path.includes("verify-email")) {
@@ -30,10 +36,20 @@ export async function POST(
     }
     if (path.includes("resend-verification-email")) {
       const { email, password } = await request.json();
+      await authService.auditLogs(
+        email,
+        "Resend Verification",
+        `${email} has request for resend verification.`
+      );
       return await authService.resendVerification(email, password);
     }
     if (path.includes("forgot-password")) {
       const { email } = await request.json();
+      await authService.auditLogs(
+        email,
+        "Forgot Password Request",
+        `${email} has been requesting for forgot password.`
+      );
       return await authService.sendPasswordResetEmail(email);
     }
     if (path.includes("reset-password")) {
@@ -41,7 +57,9 @@ export async function POST(
       return await authService.confirmPasswordReset(oobCode, newPassword);
     }
     if (path.includes("logout")) {
-      return await authService.logout();
+      const { email } = await request.json();
+      await authService.auditLogs(email, "Logout", `${email} has been logout.`);
+      return await authService.logout(email);
     }
 
     return NextResponse.json({ message: "Invalid path" }, { status: 400 });
