@@ -1,5 +1,13 @@
 import { adminAuth } from "@/lib/firebase/admin";
-import { auth, db, doc, getDoc, setDoc } from "@/lib/firebase/config";
+import {
+  auth,
+  collection,
+  db,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+} from "@/lib/firebase/config";
 import { nowISOString } from "@/utils/date";
 import { jsonRes, errorRes } from "@/utils/auth/authApiResponse";
 import { v4 as uuidv4 } from "uuid";
@@ -14,7 +22,6 @@ import {
 } from "firebase/auth";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { uniqueId } from "lodash-es";
 
 class AuthService {
   private static instance: AuthService;
@@ -267,6 +274,17 @@ class AuthService {
       });
     } catch (error) {
       console.error("Creating action logs error:", error);
+      return errorRes(error);
+    }
+  };
+  public getAuditLogs = async () => {
+    const response = await getDocs(collection(db, "logs"));
+    try {
+      const data = response.docs;
+      const formattedData = data.map((e) => e.data());
+      return jsonRes(formattedData, 200);
+    } catch (error) {
+      console.log(error);
       return errorRes(error);
     }
   };

@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import AuthService from "@/services/auth.service";
 
+const authService = AuthService.getInstance();
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ path: string[] }> }
 ) {
-  const authService = AuthService.getInstance();
   try {
     const { path } = await params;
     if (path.includes("register")) {
@@ -62,6 +62,26 @@ export async function POST(
       return await authService.logout(email);
     }
 
+    return NextResponse.json({ message: "Invalid path" }, { status: 400 });
+  } catch (error) {
+    console.error("Server error:", error);
+    return NextResponse.json(
+      { message: "Server error", error: String(error) },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ path: string[] }> }
+) {
+  try {
+    const { path } = await params;
+    if (path.includes("logs")) {
+      const response = await authService.getAuditLogs();
+      return response;
+    }
     return NextResponse.json({ message: "Invalid path" }, { status: 400 });
   } catch (error) {
     console.error("Server error:", error);
