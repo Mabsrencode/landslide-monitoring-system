@@ -42,32 +42,45 @@ const LogsTable = () => {
       </div>
     );
   return (
-    <table className="table-auto w-full mt-12">
-      <thead>
-        <tr>
-          <th className="border border-black/20 p-2">Actor</th>
-          <th className="border border-black/20 p-2">Action</th>
-          <th className="border border-black/20 p-2">Details</th>
-          <th className="border border-black/20 p-2">Created at</th>
-        </tr>
-      </thead>
-      <tbody>
-        {logsData &&
-          logsData.length > 0 &&
-          logsData.map((e, index) => (
-            <tr key={index}>
-              <td className="border border-black/20 p-2 text-sm">{e.actor}</td>
-              <td className="border border-black/20 p-2 text-sm">{e.action}</td>
-              <td className="border border-black/20 p-2 text-sm">
-                {e.details}
-              </td>
-              <td className="border border-black/20 p-2 text-sm">
-                {formatDateTime(e.createdAt)}
-              </td>
-            </tr>
-          ))}
-      </tbody>
-    </table>
+    <>
+      <table className="table-auto w-full mt-12">
+        <thead>
+          <tr>
+            <th className="border border-black/20 p-2">Actor</th>
+            <th className="border border-black/20 p-2">Action</th>
+            <th className="border border-black/20 p-2">Details</th>
+            <th className="border border-black/20 p-2">Created at</th>
+          </tr>
+        </thead>
+        <tbody>
+          {logsData &&
+            logsData.length > 0 &&
+            logsData.map((e, index) => (
+              <tr key={index}>
+                <td className="border border-black/20 p-2 text-sm">
+                  {e.actor}
+                </td>
+                <td className="border border-black/20 p-2 text-sm">
+                  {e.action}
+                </td>
+                <td className="border border-black/20 p-2 text-sm">
+                  {e.details}
+                </td>
+                <td className="border border-black/20 p-2 text-sm">
+                  {formatDateTime(e.createdAt)}
+                </td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
+      {logsData && logsData.length === 0 && (
+        <div className="mt-6 text-center">
+          <h3 className="text-2xl manrope font-semibold">
+            No logs has been found.
+          </h3>
+        </div>
+      )}
+    </>
   );
 };
 
