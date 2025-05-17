@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   LineChart,
@@ -15,6 +15,8 @@ import {
   BreakPointHooks,
   breakpointsTailwind,
 } from "@react-hooks-library/core";
+import { onValue, ref } from "firebase/database";
+import { database } from "@/lib/firebase/firebase-client";
 
 const sensorHistory = [
   {
@@ -39,14 +41,37 @@ const sensorHistory = [
     humidity: 78,
   },
 ];
-const dummySensorData = {
-  vibration: 1.8,
-  humidity: 92,
-  soilMoisture: 85,
-  temperature: 24,
-};
 
 const Content = () => {
+  const [sensorData, setSensorData] = useState<{
+    moisture: {
+      value: number;
+      timestamp: string;
+    };
+    rain: {
+      value: number;
+      timestamp: string;
+    };
+    vibration: {
+      value: number;
+      timestamp: string;
+    };
+    tilt: {
+      value: number;
+      timestamp: string;
+    };
+    warningLevel: string;
+  } | null>(null);
+  useEffect(() => {
+    const dataRef = ref(database, "sensors/");
+
+    const unsubscribe = onValue(dataRef, (snapshot) => {
+      const data = snapshot.val();
+      setSensorData(data);
+    });
+
+    return () => unsubscribe();
+  }, []);
   const { useGreater, useBetween, useSmaller } =
     BreakPointHooks(breakpointsTailwind);
   const greater = useGreater("md");
@@ -58,7 +83,7 @@ const Content = () => {
     if (smaller) return 300;
     return 230;
   })();
-  const riskLevel = evaluateLandslideRisk(dummySensorData);
+  const riskLevel = evaluateLandslideRisk(sensorData);
   const riskColor = {
     High: "bg-red-500",
     Medium: "bg-yellow-400",
@@ -81,16 +106,16 @@ const Content = () => {
         </h3>
         <ul className="mt-4 space-y-1 flex flex-col md:flex-row gap-2 w-full justify-center text-sm text-center">
           <li className="px-4 py-1 rounded bg-secondary text-white">
-            🌡️ Temperature: {dummySensorData.temperature} °C
+            💧 Moisture: {sensorData?.moisture.value ?? "N/A"}
           </li>
           <li className="px-4 py-1 rounded bg-secondary text-white">
-            💧 Humidity: {dummySensorData.humidity} %
+            🌧️ Rain: {sensorData?.rain.value ?? "N/A"}
           </li>
           <li className="px-4 py-1 rounded bg-secondary text-white">
-            🌱 Soil Moisture: {dummySensorData.soilMoisture} %
+            ♒︎ Soil Vibration: {sensorData?.vibration.value ?? "N/A"}
           </li>
           <li className="px-4 py-1 rounded bg-secondary text-white">
-            ♒︎ Vibration: {dummySensorData.vibration} g
+            ⛰️ Tilt: {sensorData?.tilt.value ?? "N/A"}
           </li>
         </ul>
       </div>
