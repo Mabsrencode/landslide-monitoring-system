@@ -4,7 +4,10 @@ export function evaluateLandslideRisk(
     rain: { value: number; timestamp: string };
     vibration: { value: number; timestamp: string };
     tilt: { value: number; timestamp: string };
-    warningLevel: string;
+    warningLevel: {
+      color: string;
+      message: string;
+    };
   } | null
 ) {
   if (!data) {

@@ -43,7 +43,7 @@ const sensorHistory = [
 ];
 
 const Content = () => {
-  const [sensorData, setSensorData] = useState<{
+  type NewType = {
     moisture: {
       value: number;
       timestamp: string;
@@ -60,8 +60,13 @@ const Content = () => {
       value: number;
       timestamp: string;
     };
-    warningLevel: string;
-  } | null>(null);
+    warningLevel: {
+      color: string;
+      message: string;
+    };
+  } | null;
+
+  const [sensorData, setSensorData] = useState<NewType>(null);
   useEffect(() => {
     const dataRef = ref(database, "sensors/");
 
