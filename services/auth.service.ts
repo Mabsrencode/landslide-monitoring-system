@@ -19,6 +19,7 @@ import {
   sendEmailVerification,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
+  updatePassword,
 } from "firebase/auth";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
@@ -277,6 +278,14 @@ class AuthService {
       return errorRes(error);
     }
   };
+
+  // public changePassword = async (user: string, password:string)=> {
+  //   try {
+  //     await updatePassword(user, password)
+  //   } catch (error) {
+
+  //   }
+  // }
   public getAuditLogs = async () => {
     const response = await getDocs(collection(db, "logs"));
     try {
