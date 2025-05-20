@@ -59,9 +59,18 @@ export async function POST(
     if (path.includes("logout")) {
       const { email } = await request.json();
       await authService.auditLogs(email, "Logout", `${email} has been logout.`);
-      return await authService.logout(email);
+      return await authService.logout();
     }
-
+    if (path.includes("change-password")) {
+      const { id, currentPassword, password, cpassword } = await request.json();
+      // if (cpassword !== password) {
+      //   return NextResponse.json({
+      //     message: "Password and confirm password are not match.",
+      //     status: 400,
+      //   });
+      // }
+      return authService.changePassword(id, currentPassword, password);
+    }
     return NextResponse.json({ message: "Invalid path" }, { status: 400 });
   } catch (error) {
     console.error("Server error:", error);

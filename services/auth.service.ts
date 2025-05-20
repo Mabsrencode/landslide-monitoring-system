@@ -16,6 +16,8 @@ import {
   checkActionCode,
   confirmPasswordReset,
   createUserWithEmailAndPassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
   sendEmailVerification,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
@@ -249,7 +251,7 @@ class AuthService {
     }
   };
 
-  public logout = async (email: string) => {
+  public logout = async () => {
     try {
       await auth.signOut();
       const cookieStore = await cookies();
@@ -279,13 +281,36 @@ class AuthService {
     }
   };
 
-  // public changePassword = async (user: string, password:string)=> {
-  //   try {
-  //     await updatePassword(user, password)
-  //   } catch (error) {
-
-  //   }
-  // }
+  public changePassword = async (
+    uid: string,
+    currentPassword: string,
+    password: string
+  ) => {
+    try {
+      const currentUser = auth.currentUser;
+      console.log(currentUser);
+      if (!currentUser || !currentUser.email) {
+        throw new Error("Authenticated user email not found");
+      }
+      const credential = EmailAuthProvider.credential(
+        currentUser.email,
+        currentPassword
+      );
+      await reauthenticateWithCredential(currentUser, credential);
+      const userDoc = await getDoc(doc(db, "users", uid));
+      if (!userDoc.exists()) {
+        throw new Error("User not found");
+      }
+      if (!currentUser || currentUser.uid !== uid) {
+        throw new Error("Authenticated user does not match");
+      }
+      await updatePassword(currentUser, password);
+      return jsonRes({ message: "Password updated successfully" }, 200);
+    } catch (error) {
+      console.error("Change password error:", error);
+      return errorRes(error);
+    }
+  };
   public getAuditLogs = async () => {
     const response = await getDocs(collection(db, "logs"));
     try {

@@ -22,3 +22,10 @@ declare type AuthLoginResponse = {
   message: string;
   data: UserCredential | null;
 };
+
+declare type ChangePassFormTypes = {
+  id: string;
+  currentPassword: string;
+  password: string;
+  cpassword: string;
+};
