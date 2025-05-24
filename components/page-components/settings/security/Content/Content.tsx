@@ -5,15 +5,18 @@ import OthersLink from "../../OthersLink/OthersLink";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/authStore";
-import MainLoader from "@/components/reusable/MainLoader/MainLoader";
 import SpinnerLoader from "@/components/reusable/SpinnerLoader/SpinnerLoader";
 import toast from "react-hot-toast";
 
 const Content = () => {
   const { user } = useAuthStore();
-  if (!user) {
-    return <MainLoader />;
-  }
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm<ChangePassFormTypes>();
   const {
     mutate: changePassword,
     isPending: isLoading,
@@ -39,16 +42,12 @@ const Content = () => {
       reset();
     },
   });
-  const {
-    register,
-    handleSubmit,
-    reset,
-    watch,
-    formState: { errors },
-  } = useForm<ChangePassFormTypes>();
   const onSubmit = (data: ChangePassFormTypes) => {
     changePassword(data);
   };
+  if (!user) {
+    return <SpinnerLoader variant="big" />;
+  }
   return (
     <section className="container mx-auto p-4 w-full h-full">
       <BackRoute />
