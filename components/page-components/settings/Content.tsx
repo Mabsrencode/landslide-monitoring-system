@@ -12,7 +12,6 @@ const Content = () => {
   const { user, setUser } = useAuthStore();
   const router = useRouter();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [password, setPassword] = useState("");
   const {
     mutate: deleteMutation,
     isPending: isDeleting,
@@ -62,6 +61,7 @@ const Content = () => {
     <>
       {showDeleteModal && (
         <Modal
+          error={error?.message}
           isLoading={isDeleting}
           title="Delete Account"
           description="Are you sure you want to delete your account? This action cannot be undone."

@@ -6,6 +6,7 @@ interface ModalProps {
   setShow: Dispatch<SetStateAction<boolean>>;
   onClick: () => void;
   isLoading: boolean;
+  error?: string | null;
 }
 const Modal: React.FC<ModalProps> = ({
   title,
@@ -14,6 +15,7 @@ const Modal: React.FC<ModalProps> = ({
   setShow,
   show,
   isLoading,
+  error,
 }) => {
   return (
     <div className="center z-[1000] w-[400px] bg-white rounded shadow-lg p-4 border border-black/10">
@@ -35,6 +37,7 @@ const Modal: React.FC<ModalProps> = ({
         >
           {isLoading ? "Processing..." : "Confirm"}
         </button>
+        <span className="mt-2 text-red-500 text-sm font-medium">{error}</span>
       </div>
     </div>
   );
