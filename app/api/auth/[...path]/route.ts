@@ -62,14 +62,9 @@ export async function POST(
       return await authService.logout();
     }
     if (path.includes("change-password")) {
-      const { id, currentPassword, password, cpassword } = await request.json();
-      // if (cpassword !== password) {
-      //   return NextResponse.json({
-      //     message: "Password and confirm password are not match.",
-      //     status: 400,
-      //   });
-      // }
-      return authService.changePassword(id, currentPassword, password);
+      const { id, currentPassword, newPassword } = await request.json();
+
+      return authService.changePassword(id, currentPassword, newPassword);
     }
     return NextResponse.json({ message: "Invalid path" }, { status: 400 });
   } catch (error) {

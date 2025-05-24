@@ -28,4 +28,5 @@ declare type ChangePassFormTypes = {
   currentPassword: string;
   password: string;
   cpassword: string;
+  newPassword: string;
 };

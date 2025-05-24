@@ -284,27 +284,34 @@ class AuthService {
   public changePassword = async (
     uid: string,
     currentPassword: string,
-    password: string
+    newPassword: string
   ) => {
     try {
-      const currentUser = auth.currentUser;
-      console.log(currentUser);
-      if (!currentUser || !currentUser.email) {
-        throw new Error("Authenticated user email not found");
+      const user = await adminAuth.getUser(uid);
+
+      if (!user.email) {
+        return NextResponse.json(
+          { message: "User email not found" },
+          { status: 400 }
+        );
       }
-      const credential = EmailAuthProvider.credential(
-        currentUser.email,
-        currentPassword
-      );
-      await reauthenticateWithCredential(currentUser, credential);
-      const userDoc = await getDoc(doc(db, "users", uid));
-      if (!userDoc.exists()) {
-        throw new Error("User not found");
+      try {
+        await signInWithEmailAndPassword(auth, user.email, currentPassword);
+        await this.auditLogs(
+          user.email,
+          "Change Password",
+          `${user.email} has been his/her password.`
+        );
+      } catch (error) {
+        return NextResponse.json(
+          { message: "Current password is incorrect" },
+          { status: 400 }
+        );
       }
-      if (!currentUser || currentUser.uid !== uid) {
-        throw new Error("Authenticated user does not match");
-      }
-      await updatePassword(currentUser, password);
+      await adminAuth.updateUser(uid, {
+        password: newPassword,
+      });
+
       return jsonRes({ message: "Password updated successfully" }, 200);
     } catch (error) {
       console.error("Change password error:", error);

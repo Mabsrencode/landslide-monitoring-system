@@ -7,9 +7,13 @@ import { useMutation } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/authStore";
 import MainLoader from "@/components/reusable/MainLoader/MainLoader";
 import SpinnerLoader from "@/components/reusable/SpinnerLoader/SpinnerLoader";
+import toast from "react-hot-toast";
 
 const Content = () => {
   const { user } = useAuthStore();
+  if (!user) {
+    return <MainLoader />;
+  }
   const {
     mutate: changePassword,
     isPending: isLoading,
@@ -24,21 +28,22 @@ const Content = () => {
         body: JSON.stringify({
           id: user?.id,
           currentPassword: data.currentPassword,
-          password: data.password,
-          cpassword: data.cpassword,
+          newPassword: data.password,
         }),
       });
       const responseData = await response.json();
       return responseData;
     },
     onSuccess: () => {
-      // reset();
+      toast.success("Password changed successfully");
+      reset();
     },
   });
   const {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<ChangePassFormTypes>();
   const onSubmit = (data: ChangePassFormTypes) => {
@@ -84,6 +89,10 @@ const Content = () => {
                     value: true,
                     message: "Password is required.",
                   },
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters",
+                  },
                 })}
                 type="password"
                 id="new_psw"
@@ -104,6 +113,8 @@ const Content = () => {
                     value: true,
                     message: "Confirm Password is required.",
                   },
+                  validate: (value) =>
+                    value === watch("password") || "Passwords do not match",
                 })}
                 type="password"
                 id="confirm_psw"
@@ -124,6 +135,11 @@ const Content = () => {
           >
             {isLoading ? <SpinnerLoader /> : "  Save"}
           </button>
+          {error && (
+            <div className="text-red-500 text-center">
+              {error.message || "Failed to change password"}
+            </div>
+          )}
         </form>
         <OthersLink />
       </div>
