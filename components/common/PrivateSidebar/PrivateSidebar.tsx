@@ -124,7 +124,12 @@ const PrivateSidebar = () => {
                 className="flex justify-center items-center bg-primary text-3xl rounded-full h-11 w-11 hover:bg-primary/70 cursor-pointer transition-all"
               >
                 {user && user.profileImage && user.name ? (
-                  <Image src={user.profileImage} fill alt={user.name} />
+                  <Image
+                    src={user.profileImage}
+                    fill
+                    alt={user.name}
+                    className="rounded-full"
+                  />
                 ) : (
                   <h3> {user.email.split("")[0].toUpperCase()}</h3>
                 )}

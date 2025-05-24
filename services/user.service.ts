@@ -10,6 +10,7 @@ import {
 } from "@/lib/firebase/config";
 import { errorRes, jsonRes } from "@/utils/auth/authApiResponse";
 import { nowISOString } from "@/utils/date";
+import { deleteDoc } from "firebase/firestore";
 
 class UserService {
   private static instance: UserService;
@@ -92,6 +93,20 @@ class UserService {
       });
     } catch (error) {
       console.error("Profile update error:", error);
+      return errorRes(error);
+    }
+  };
+
+  public deleteAccount = async (uid: string) => {
+    try {
+      await adminAuth.deleteUser(uid);
+      await deleteDoc(doc(db, "users", uid));
+      return jsonRes({
+        success: true,
+        message: "Account deleted successfully",
+      });
+    } catch (error) {
+      console.error("Account deletion error:", error);
       return errorRes(error);
     }
   };
