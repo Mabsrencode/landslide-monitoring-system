@@ -56,10 +56,6 @@ const Content = () => {
       value: number;
       timestamp: string;
     };
-    tilt: {
-      value: number;
-      timestamp: string;
-    };
     warningLevel: {
       color: string;
       message: string;
@@ -119,9 +115,6 @@ const Content = () => {
           <li className="px-4 py-1 rounded bg-secondary text-white">
             ♒︎ Soil Vibration: {sensorData?.vibration.value ?? "N/A"}
           </li>
-          <li className="px-4 py-1 rounded bg-secondary text-white">
-            ⛰️ Tilt: {sensorData?.tilt.value ?? "N/A"}
-          </li>
         </ul>
       </div>
       <div className="mt-4 space-y-6 p-4 border border-black/20 rounded">
@@ -180,24 +173,6 @@ const Content = () => {
                 dataKey="humidity"
                 stroke="#8884d8"
                 name="Humidity"
-              />
-            </LineChart>
-            <LineChart
-              width={chartWidth}
-              height={250}
-              data={sensorHistory}
-              className="border border-black/20 w-full p-2 rounded"
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="time" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="temperature"
-                stroke="#8884d8"
-                name="Temperature"
               />
             </LineChart>
           </div>
