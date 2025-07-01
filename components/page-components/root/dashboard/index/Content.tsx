@@ -10,7 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import { evaluateLandslideRisk } from "@/utils/monitoring/riskEvaluator";
+// import { evaluateLandslideRisk } from "@/utils/monitoring/riskEvaluator";
 import {
   BreakPointHooks,
   breakpointsTailwind,
@@ -84,13 +84,13 @@ const Content = () => {
     if (smaller) return 300;
     return 230;
   })();
-  const riskLevel = evaluateLandslideRisk(sensorData);
-  const riskColor = {
-    High: "bg-red-500",
-    Medium: "bg-orange-500",
-    Low: "bg-green-500",
-    Good: "bg-yellow-400",
-  };
+  // const riskLevel = evaluateLandslideRisk(sensorData);
+  // const riskColor = {
+  //   High: "bg-red-500",
+  //   Medium: "bg-orange-500",
+  //   Low: "bg-green-500",
+  //   Good: "bg-yellow-400",
+  // };
   return (
     <section className="container mx-auto p-4">
       <div className="flex items-center gap-4 w-full justify-between">
