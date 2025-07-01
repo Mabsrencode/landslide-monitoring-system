@@ -95,10 +95,12 @@ const Content = () => {
     <section className="container mx-auto p-4">
       <div className="flex items-center gap-4 w-full justify-between">
         <h2 className="text-4xl manrope font-semibold">Dashboard</h2>
+        {/* ${riskColor[riskLevel]} */}
         <div
-          className={`text-white text-xs px-4 py-2 rounded shadow ${riskColor[riskLevel]}`}
+          className={`text-white text-xs px-4 py-2 rounded shadow bg-${sensorData?.warningLevel.color.toLowerCase()}-500`}
         >
-          Landslide Risk Level: <strong>{riskLevel}</strong>
+          Landslide Risk Level:{" "}
+          <strong>{sensorData?.warningLevel.message}</strong>
         </div>
       </div>
       <div className="p-4 border border-black/20 rounded mt-6">
