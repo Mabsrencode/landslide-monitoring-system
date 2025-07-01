@@ -87,9 +87,9 @@ const Content = () => {
   const riskLevel = evaluateLandslideRisk(sensorData);
   const riskColor = {
     High: "bg-red-500",
-    Medium: "bg-yellow-400",
-    Low: "bg-blue-400",
-    Good: "bg-green-500",
+    Medium: "bg-orange-500",
+    Low: "bg-green-500",
+    Good: "bg-yellow-400",
   };
   return (
     <section className="container mx-auto p-4">
