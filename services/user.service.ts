@@ -110,6 +110,32 @@ class UserService {
       return errorRes(error);
     }
   };
+  public listAllUsers = async (maxResults = 1000) => {
+    try {
+      const listUsersResult = await adminAuth.listUsers(maxResults);
+      const users = listUsersResult.users.map((userRecord) => ({
+        uid: userRecord.uid,
+        email: userRecord.email,
+        displayName: userRecord.displayName,
+        photoURL: userRecord.photoURL,
+        emailVerified: userRecord.emailVerified,
+        disabled: userRecord.disabled,
+        metadata: {
+          creationTime: userRecord.metadata.creationTime,
+          lastSignInTime: userRecord.metadata.lastSignInTime,
+        },
+        providerData: userRecord.providerData,
+      }));
+
+      return jsonRes({
+        success: true,
+        users,
+      });
+    } catch (error) {
+      console.error("Error listing users:", error);
+      return errorRes(error);
+    }
+  };
 }
 
 export default UserService;
