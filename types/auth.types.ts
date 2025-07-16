@@ -16,7 +16,8 @@ interface UserCredential {
   id: string;
   profileImage: string;
   emailVerified: boolean;
-  role?: "user" | "admin" | null;
+  role?: string | null;
+  status: "active" | "inactive";
 }
 declare type AuthLoginResponse = {
   message: string;

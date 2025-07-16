@@ -128,6 +128,7 @@ class AuthService {
             id: user.uid,
             profileImage: userData?.profileImage || null,
             emailVerified: user.emailVerified,
+            role: userData?.role,
           },
         },
         { status: 200 }

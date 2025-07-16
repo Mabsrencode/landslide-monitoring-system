@@ -1,4 +1,5 @@
 "use client";
+import SpinnerLoader from "@/components/reusable/SpinnerLoader/SpinnerLoader";
 import { formatDateTime } from "@/utils/formatDateTime";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
@@ -11,7 +12,7 @@ interface LogsProps {
 const LogsTable = () => {
   const {
     data: logsData,
-    isPending: isLoading,
+    isFetching: isLoading,
     error,
   } = useQuery<LogsProps[] | null>({
     queryKey: ["logs"],
@@ -22,19 +23,6 @@ const LogsTable = () => {
     },
     staleTime: 5 * 60 * 1000,
   });
-  if (isLoading)
-    return (
-      <div className="grid gap-2 mt-12">
-        {Array.from({ length: 8 }).map((_, e) => (
-          <div key={e} className="grid grid-cols-4 gap-2">
-            <div className="h-[10px] w-[80%] bg-gray-400 rounded-full animate-pulse"></div>
-            <div className="h-[10px] w-[20%] bg-gray-400 rounded-full animate-pulse"></div>
-            <div className="h-[10px] w-[80%] bg-gray-400 rounded-full animate-pulse"></div>
-            <div className="h-[10px] w-[100%] bg-gray-400 rounded-full animate-pulse"></div>
-          </div>
-        ))}
-      </div>
-    );
   if (error)
     return (
       <div className="text-2xl font-semibold manrope">
@@ -43,36 +31,56 @@ const LogsTable = () => {
     );
   return (
     <>
-      <table className="table-auto w-full mt-12">
-        <thead>
-          <tr>
-            <th className="border border-black/20 p-2">Actor</th>
-            <th className="border border-black/20 p-2">Action</th>
-            <th className="border border-black/20 p-2">Details</th>
-            <th className="border border-black/20 p-2">Created at</th>
-          </tr>
-        </thead>
-        <tbody>
-          {logsData &&
-            logsData.length > 0 &&
-            logsData.map((e, index) => (
-              <tr key={index}>
-                <td className="border border-black/20 p-2 text-sm">
-                  {e.actor}
-                </td>
-                <td className="border border-black/20 p-2 text-sm">
-                  {e.action}
-                </td>
-                <td className="border border-black/20 p-2 text-sm">
-                  {e.details}
-                </td>
-                <td className="border border-black/20 p-2 text-sm">
-                  {formatDateTime(e.createdAt)}
-                </td>
+      {isLoading ? (
+        <div className="w-full h-full">
+          <SpinnerLoader variant="big" />
+        </div>
+      ) : (
+        <div className="relative overflow-x-auto mt-12 rounded-xl">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-700 table-auto">
+            <thead className="text-xs text-white uppercase bg-secondary border border-gray-500">
+              <tr>
+                <th scope="col" className="px-6 py-3">
+                  Actor
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Action
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Details
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Created AT
+                </th>
               </tr>
-            ))}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {logsData &&
+                logsData.length > 0 &&
+                logsData.map((e, index) => (
+                  <tr
+                    key={index}
+                    className="border bg-gray-200 border-gray-300"
+                  >
+                    <th
+                      scope="row"
+                      className="px-6 py-4 font-medium text-black whitespace-nowrap"
+                    >
+                      {e.actor}
+                    </th>
+                    <td className="px-6 py-4"> {e.action}</td>
+                    <td className="px-6 py-4"> {e.details}</td>
+                    <td className="px-6 py-4">
+                      {" "}
+                      {formatDateTime(e.createdAt)}
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
       {logsData && logsData.length === 0 && (
         <div className="mt-6 text-center">
           <h3 className="text-2xl manrope font-semibold">
