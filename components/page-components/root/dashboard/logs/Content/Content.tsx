@@ -1,12 +1,13 @@
 import React from "react";
 import LogsTable from "../LogsTable/LogsTable";
+import Section from "@/components/reusable/Section/Section";
 
 const Content = () => {
   return (
-    <section className="container mx-auto p-4">
+    <Section>
       <h2 className="text-4xl manrope font-semibold">Logs</h2>
       <LogsTable />
-    </section>
+    </Section>
   );
 };
 

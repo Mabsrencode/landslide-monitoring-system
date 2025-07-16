@@ -17,6 +17,7 @@ import {
 } from "@react-hooks-library/core";
 import { onValue, ref } from "firebase/database";
 import { database } from "@/lib/firebase/firebase-client";
+import Section from "@/components/reusable/Section/Section";
 
 const sensorHistory = [
   {
@@ -92,7 +93,7 @@ const Content = () => {
   //   Good: "bg-yellow-400",
   // };
   return (
-    <section className="container mx-auto p-4">
+    <Section>
       <div className="flex items-center gap-4 w-full justify-between">
         <div className="flex flex-col justify-between w-full lg:flex-row items-center">
           <h2 className="text-4xl manrope font-semibold">Dashboard</h2>
@@ -182,7 +183,7 @@ const Content = () => {
           </div>
         </div>
       </div>
-    </section>
+    </Section>
   );
 };
 
