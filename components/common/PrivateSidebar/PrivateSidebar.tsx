@@ -17,6 +17,7 @@ import { IoIosClose } from "react-icons/io";
 import { useMutation } from "@tanstack/react-query";
 import SpinnerLoader from "@/components/reusable/SpinnerLoader/SpinnerLoader";
 import toast from "react-hot-toast";
+import { IoPeopleSharp } from "react-icons/io5";
 const navigationItems = [
   {
     link: "/dashboard",
@@ -27,11 +28,18 @@ const navigationItems = [
     link: "/dashboard/logs",
     name: "Logs",
     icon: <LuLogs />,
+    adminOnly: true,
   },
   {
     link: "/dashboard/incidents",
     name: "Incidents",
     icon: <CiWarning />,
+  },
+  {
+    link: "/dashboard/users",
+    name: "Users",
+    icon: <IoPeopleSharp />,
+    adminOnly: true,
   },
 ];
 const PrivateSidebar = () => {
@@ -65,6 +73,10 @@ const PrivateSidebar = () => {
       toast.error(`Logout error: ${(error as Error).message}`);
     },
   });
+  const isAdmin = user?.role === "admin";
+  const filteredNavigationItems = navigationItems.filter(
+    (item) => !item.adminOnly || isAdmin
+  );
   return (
     <aside
       className={`sticky z-[1000] top-0 left-0 py-6 transition-all bg-white text-white h-screen flex flex-col justify-between items-center ${
@@ -86,7 +98,7 @@ const PrivateSidebar = () => {
         </Link>
         <nav className="mt-12">
           <ul className="grid gap-2 px-2 text-xl transition-all">
-            {navigationItems.map((navItem) => (
+            {filteredNavigationItems.map((navItem) => (
               <li key={navItem.link}>
                 <Link
                   className={`link flex items-center gap-2 transition-all p-[14px] hover:bg-secondary hover:text-white text-gray-700 rounded ${

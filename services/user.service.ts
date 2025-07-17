@@ -10,7 +10,7 @@ import {
 } from "@/lib/firebase/config";
 import { errorRes, jsonRes } from "@/utils/auth/authApiResponse";
 import { nowISOString } from "@/utils/date";
-import { deleteDoc } from "firebase/firestore";
+import { deleteDoc, getDoc } from "firebase/firestore";
 
 class UserService {
   private static instance: UserService;
@@ -113,23 +113,36 @@ class UserService {
   public listAllUsers = async (maxResults = 1000) => {
     try {
       const listUsersResult = await adminAuth.listUsers(maxResults);
-      const users = listUsersResult.users.map((userRecord) => ({
-        uid: userRecord.uid,
-        email: userRecord.email,
-        displayName: userRecord.displayName,
-        photoURL: userRecord.photoURL,
-        emailVerified: userRecord.emailVerified,
-        disabled: userRecord.disabled,
-        metadata: {
-          creationTime: userRecord.metadata.creationTime,
-          lastSignInTime: userRecord.metadata.lastSignInTime,
-        },
-        providerData: userRecord.providerData,
-      }));
+
+      const users = await Promise.all(
+        listUsersResult.users.map(async (userRecord) => {
+          let customData = {};
+          try {
+            const docSnap = await getDoc(doc(db, "users", userRecord.uid));
+            if (docSnap.exists()) {
+              customData = docSnap.data();
+            }
+          } catch (e) {
+            console.error(
+              `Error fetching Firestore data for UID ${userRecord.uid}:`,
+              e
+            );
+          }
+
+          return {
+            uid: userRecord.uid,
+            email: userRecord.email,
+            emailVerified: userRecord.emailVerified,
+            displayName: userRecord.displayName,
+            disabled: userRecord.disabled,
+            ...customData,
+          };
+        })
+      );
 
       return jsonRes({
         success: true,
-        users,
+        data: users,
       });
     } catch (error) {
       console.error("Error listing users:", error);

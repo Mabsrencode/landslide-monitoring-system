@@ -19,12 +19,12 @@ interface UserCredential {
   role?: string | null;
   status: "active" | "inactive";
 }
-declare type AuthLoginResponse = {
+type AuthLoginResponse = {
   message: string;
   data: UserCredential | null;
 };
 
-declare type ChangePassFormTypes = {
+type ChangePassFormTypes = {
   id: string;
   currentPassword: string;
   password: string;

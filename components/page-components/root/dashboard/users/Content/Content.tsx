@@ -1,8 +1,13 @@
 import Section from "@/components/reusable/Section/Section";
 import React from "react";
+import UsersTable from "../UsersTable/UsersTable";
 
 const Content = () => {
-  return <Section>Content</Section>;
+  return (
+    <Section>
+      <UsersTable />
+    </Section>
+  );
 };
 
 export default Content;
