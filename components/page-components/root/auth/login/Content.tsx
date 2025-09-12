@@ -190,6 +190,12 @@ const Content = () => {
               Register
             </Link>
           </p>
+          <Link
+            href={"/status"}
+            className="px-6 py-2 inline-block text-center text-white bg-secondary"
+          >
+            See the latest landslide status
+          </Link>
         </form>
       </div>
     </section>

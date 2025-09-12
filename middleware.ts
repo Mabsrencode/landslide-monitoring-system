@@ -8,6 +8,7 @@ const publicRoutes = [
   "/auth/forgot-password",
   "/auth/reset-password",
   "/",
+  "/status",
 ];
 
 export async function middleware(request: NextRequest) {

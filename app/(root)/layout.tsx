@@ -12,6 +12,7 @@ const publicRoutes = [
   "/auth/verify-email",
   "/auth/forgot-password",
   "/auth/reset-password",
+  "/status",
 ];
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
