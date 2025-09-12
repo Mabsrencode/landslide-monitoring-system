@@ -192,9 +192,9 @@ const Content = () => {
           </p>
           <Link
             href={"/status"}
-            className="px-6 py-2 inline-block text-center text-white bg-secondary"
+            className="px-6 py-2 inline-block text-center text-white bg-secondary mt-8 font-medium uppercase"
           >
-            See the latest landslide status
+            Bantay Status
           </Link>
         </form>
       </div>
