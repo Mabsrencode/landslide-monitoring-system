@@ -26,16 +26,26 @@ const Content = () => {
   } | null;
 
   const [sensorData, setSensorData] = useState<NewType>(null);
+
   useEffect(() => {
     const dataRef = ref(database, "sensors/");
-
     const unsubscribe = onValue(dataRef, (snapshot) => {
       const data = snapshot.val();
       setSensorData(data);
     });
-
     return () => unsubscribe();
   }, []);
+
+  const latestTimestamp = sensorData
+    ? new Date(
+        Math.max(
+          new Date(sensorData.moisture.timestamp).getTime(),
+          new Date(sensorData.rain.timestamp).getTime(),
+          new Date(sensorData.vibration.timestamp).getTime()
+        )
+      ).toLocaleString()
+    : null;
+
   return (
     <Section>
       <div
@@ -44,10 +54,18 @@ const Content = () => {
         Landslide Risk Level:{" "}
         <strong>{sensorData?.warningLevel.message}</strong>
       </div>
+
       <div className="p-4 border border-black/20 rounded mt-6">
         <h3 className="font-semibold text-2xl manrope text-center">
           Current Sensor Data
         </h3>
+
+        {latestTimestamp && (
+          <p className="text-center text-gray-400 text-sm mt-2">
+            Last updated: {latestTimestamp}
+          </p>
+        )}
+
         <ul className="mt-4 space-y-1 flex flex-col md:flex-row gap-2 w-full justify-center text-sm text-center">
           <li className="px-4 py-1 rounded bg-secondary text-white">
             💧 Moisture: {sensorData?.moisture.value ?? "N/A"}
