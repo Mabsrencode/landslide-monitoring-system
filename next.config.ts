@@ -3,11 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   swcMinify: false,
-  experimental: {
-    turbo: {
-      resolveAlias: {
-        canvas: "./empty-module.ts",
-      },
+  turbopack: {
+    resolveAlias: {
+      canvas: "./empty-module.ts",
     },
   },
 };
