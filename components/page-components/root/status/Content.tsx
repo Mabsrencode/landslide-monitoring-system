@@ -2,7 +2,9 @@
 import Section from "@/components/reusable/Section/Section";
 import { database } from "@/lib/firebase/firebase-client";
 import { onValue, ref } from "firebase/database";
+import dynamic from "next/dynamic";
 
+const Map = dynamic(() => import("../../../reusable/Map/Map"), { ssr: false });
 import React, { useEffect, useState } from "react";
 
 const Content = () => {
@@ -77,6 +79,9 @@ const Content = () => {
             ♒︎ Soil Vibration: {sensorData?.vibration.value ?? "N/A"}
           </li>
         </ul>
+      </div>
+      <div className="mt-24 h-[800px] w-[80%] mx-auto ">
+<Map/>
       </div>
     </Section>
   );
