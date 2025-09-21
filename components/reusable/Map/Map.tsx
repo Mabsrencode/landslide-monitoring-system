@@ -1,10 +1,8 @@
-"use client"; 
 import "leaflet/dist/leaflet.css";
 
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-
 
 const customIcon = new L.Icon({
   iconUrl: "/marker-icon.png",
@@ -19,7 +17,7 @@ export default function Map() {
     <MapContainer
       center={[51.505, -0.09]}
       zoom={13}
-      style={{ height: "100vh", width: "100%" }}
+      style={{ height: "100%", width: "100%" }}
     >
       <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'

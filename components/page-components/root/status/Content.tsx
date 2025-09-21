@@ -1,10 +1,9 @@
 "use client";
+import BackRoute from "@/components/reusable/BackRoute/BackRoute";
 import Section from "@/components/reusable/Section/Section";
 import { database } from "@/lib/firebase/firebase-client";
 import { onValue, ref } from "firebase/database";
-import dynamic from "next/dynamic";
-
-const Map = dynamic(() => import("../../../reusable/Map/Map"), { ssr: false });
+import Map from "@/components/reusable/Map/Map";
 import React, { useEffect, useState } from "react";
 
 const Content = () => {
@@ -50,6 +49,7 @@ const Content = () => {
 
   return (
     <Section>
+      <BackRoute />
       <div
         className={`text-white text-2xl text-center px-4 py-2 rounded shadow bg-${sensorData?.warningLevel.color.toLowerCase()}-500`}
       >
@@ -80,8 +80,9 @@ const Content = () => {
           </li>
         </ul>
       </div>
-      <div className="mt-24 h-[800px] w-[80%] mx-auto ">
-<Map/>
+      <h3 className="text-3xl manrope text-center mt-4">Detector locations</h3>
+      <div className="mt-2 h-[600px] w-[80%] mx-auto ">
+        <Map />
       </div>
     </Section>
   );
