@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 
-const Map = dynamic(() => import("./Map"), {
+const MapComponent = dynamic(() => import("./Map"), {
   ssr: false,
   loading: () => (
     <div className="h-[600px] w-full flex items-center justify-center border border-black/20">
@@ -9,4 +9,4 @@ const Map = dynamic(() => import("./Map"), {
   ),
 });
 
-export default Map;
+export default MapComponent;

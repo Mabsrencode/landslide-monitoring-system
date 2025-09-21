@@ -3,7 +3,7 @@ import BackRoute from "@/components/reusable/BackRoute/BackRoute";
 import Section from "@/components/reusable/Section/Section";
 import { database } from "@/lib/firebase/firebase-client";
 import { onValue, ref } from "firebase/database";
-import Map from "@/components/reusable/Map/Map";
+import MapComponent from "@/components/reusable/Map";
 import React, { useEffect, useState } from "react";
 
 const Content = () => {
@@ -82,7 +82,7 @@ const Content = () => {
       </div>
       <h3 className="text-3xl manrope text-center mt-4">Detector locations</h3>
       <div className="mt-2 h-[600px] w-[80%] mx-auto ">
-        <Map />
+        <MapComponent />
       </div>
     </Section>
   );
