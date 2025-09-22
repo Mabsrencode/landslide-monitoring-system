@@ -19,7 +19,7 @@ import { onValue, ref } from "firebase/database";
 import { database } from "@/lib/firebase/firebase-client";
 import Section from "@/components/reusable/Section/Section";
 import MapComponent from "@/components/reusable/Map";
-
+import { useAuthStore } from "@/stores/authStore";
 const sensorHistory = [
   {
     time: "10:00",
@@ -45,6 +45,8 @@ const sensorHistory = [
 ];
 
 const Content = () => {
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === "admin";
   type NewType = {
     moisture: {
       value: number;
@@ -123,67 +125,70 @@ const Content = () => {
           </li>
         </ul>
       </div>
-      <div className="mt-4 space-y-6 p-4 border border-black/20 rounded">
-        <h3 className="font-semibold text-4xl mb-2 text-center">History</h3>
-        <div className="flex items-center justify-center">
-          <div className="grid xl:grid-cols-2 gap-4">
-            <LineChart
-              width={chartWidth}
-              height={250}
-              data={sensorHistory}
-              className="border border-black/20 w-full p-2 rounded"
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="time" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="soilMoisture"
-                stroke="#8884d8"
-                name="Soil Moisture"
-              />
-            </LineChart>
-            <LineChart
-              width={chartWidth}
-              height={250}
-              data={sensorHistory}
-              className="border border-black/20 w-full p-2 rounded"
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="time" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="vibration"
-                stroke="#8884d8"
-                name="Vibration"
-              />
-            </LineChart>
-            <LineChart
-              width={chartWidth}
-              height={250}
-              data={sensorHistory}
-              className="border border-black/20 w-full p-2 rounded"
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="time" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="humidity"
-                stroke="#8884d8"
-                name="Humidity"
-              />
-            </LineChart>
+      {isAdmin && (
+        <div className="mt-4 space-y-6 p-4 border border-black/20 rounded">
+          <h3 className="font-semibold text-4xl mb-2 text-center">History</h3>
+          <div className="flex items-center justify-center">
+            <div className="grid xl:grid-cols-2 gap-4">
+              <LineChart
+                width={chartWidth}
+                height={250}
+                data={sensorHistory}
+                className="border border-black/20 w-full p-2 rounded"
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="time" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="soilMoisture"
+                  stroke="#8884d8"
+                  name="Soil Moisture"
+                />
+              </LineChart>
+              <LineChart
+                width={chartWidth}
+                height={250}
+                data={sensorHistory}
+                className="border border-black/20 w-full p-2 rounded"
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="time" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="vibration"
+                  stroke="#8884d8"
+                  name="Vibration"
+                />
+              </LineChart>
+              <LineChart
+                width={chartWidth}
+                height={250}
+                data={sensorHistory}
+                className="border border-black/20 w-full p-2 rounded"
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="time" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="humidity"
+                  stroke="#8884d8"
+                  name="Humidity"
+                />
+              </LineChart>
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
       <div className="h-[600px] w-full border border-black/20 mt-12">
         <MapComponent />
       </div>
