@@ -1,7 +1,10 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 import { getDatabase } from "firebase/database";
+import { getStorage } from "firebase/storage";
 
-const firebaseConfigClient = {
+const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
   databaseURL: process.env.NEXT_PUBLIC_REALTIME_DB,
@@ -11,7 +14,10 @@ const firebaseConfigClient = {
   appId: process.env.NEXT_PUBLIC_APP_ID,
 };
 
-const app = initializeApp(firebaseConfigClient);
-const database = getDatabase(app);
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-export { database };
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const database = getDatabase(app);
+export const storage = getStorage(app);
+export default app;
