@@ -18,7 +18,6 @@ import {
 import { onValue, ref } from "firebase/database";
 import { database } from "@/lib/firebase/firebase-client";
 import Section from "@/components/reusable/Section/Section";
-import MapComponent from "@/components/reusable/Map";
 import { useAuthStore } from "@/stores/authStore";
 const sensorHistory = [
   {
@@ -188,10 +187,6 @@ const Content = () => {
           </div>
         </div>
       )}
-
-      <div className="h-[600px] w-full border border-black/20 mt-12">
-        <MapComponent />
-      </div>
     </Section>
   );
 };

@@ -18,11 +18,17 @@ import { useMutation } from "@tanstack/react-query";
 import SpinnerLoader from "@/components/reusable/SpinnerLoader/SpinnerLoader";
 import toast from "react-hot-toast";
 import { IoPeopleSharp } from "react-icons/io5";
+import { FaMapMarkedAlt } from "react-icons/fa";
 const navigationItems = [
   {
     link: "/dashboard",
     name: "Dashboard",
     icon: <MdSpaceDashboard />,
+  },
+  {
+    link: "/dashboard/map",
+    name: "Map",
+    icon: <FaMapMarkedAlt />,
   },
   {
     link: "/dashboard/logs",
