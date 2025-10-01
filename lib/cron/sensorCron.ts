@@ -16,7 +16,6 @@ export function startSensorCron() {
     try {
       const snapshot = await get(ref(database, "sensors/"));
       const latestData = snapshot.val();
-      console.log(latestData);
       if (!latestData) {
         console.log("No sensor data found.");
         return;
@@ -38,8 +37,6 @@ export function startSensorCron() {
         ...latestData,
         createdAt: nowISOString(),
       });
-
-      console.log("Sensor data saved:", latestData);
     } catch (error) {
       console.error("Error saving sensor data:", error);
     }

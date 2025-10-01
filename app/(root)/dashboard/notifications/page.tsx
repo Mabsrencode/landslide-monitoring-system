@@ -1,4 +1,4 @@
-import Content from "@/components/page-components/root/dashboard/incidents/Content/Content";
+import Content from "@/components/page-components/root/dashboard/notifications/Content/Content";
 import React from "react";
 
 const page = () => {

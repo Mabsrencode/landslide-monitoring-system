@@ -12,6 +12,9 @@ const environment = {
     adminPrivateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY,
     firebaseService: process.env.FIREBASE_SERVICE,
   },
+  semaphore: {
+    apiKey: process.env.SEMAPHORE_API_KEY as string,
+  },
   public: {
     firebase: {
       projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID as string,
