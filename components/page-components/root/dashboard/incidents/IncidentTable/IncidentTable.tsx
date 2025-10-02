@@ -86,7 +86,7 @@ const IncidentTable = () => {
                   <th className="px-6 py-3">Level</th>
                   <th className="px-6 py-3">Message</th>
                   <th className="px-6 py-3">Type</th>
-                  <th className="px-6 py-3">Created At</th>
+                  <th className="px-6 py-3">Date</th>
                 </tr>
               </thead>
               <tbody>

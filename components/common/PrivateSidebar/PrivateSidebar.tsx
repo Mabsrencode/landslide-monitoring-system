@@ -32,7 +32,7 @@ const navigationItems = [
   },
   // {
   //   link: "/dashboard/notifications",
-  //   name: "Alerts",
+  //   name: "Notifications",
   //   icon: <IoNotificationsCircleOutline />,
   //   adminOnly: true,
   // },
@@ -44,7 +44,7 @@ const navigationItems = [
   },
   {
     link: "/dashboard/incidents",
-    name: "Incidents",
+    name: "Alerts",
     icon: <CiWarning />,
   },
   {
