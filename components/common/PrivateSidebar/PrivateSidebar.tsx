@@ -17,7 +17,7 @@ import { IoIosClose } from "react-icons/io";
 import { useMutation } from "@tanstack/react-query";
 import SpinnerLoader from "@/components/reusable/SpinnerLoader/SpinnerLoader";
 import toast from "react-hot-toast";
-import { IoNotificationsCircleOutline, IoPeopleSharp } from "react-icons/io5";
+import {  IoPeopleSharp } from "react-icons/io5";
 import { FaMapMarkedAlt } from "react-icons/fa";
 const navigationItems = [
   {
