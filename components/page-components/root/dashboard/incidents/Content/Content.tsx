@@ -8,7 +8,7 @@ const Content = () => {
     <Section>
       <BackRoute />
       <h2 className="text-4xl manrope font-semibold">Incidents</h2>
-      <IncidentTable />
+      <IncidentTable pagination />
     </Section>
   );
 };

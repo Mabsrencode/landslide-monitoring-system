@@ -12,7 +12,7 @@ interface LogsProps {
   level: string;
 }
 
-const IncidentTable = () => {
+const IncidentTable = ({ pagination }: { pagination: boolean }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
@@ -93,7 +93,9 @@ const IncidentTable = () => {
                 {currentLogs?.map((log, index) => (
                   <tr key={index} className="border bg-gray-50 border-gray-300">
                     <th className="px-6 py-4 font-medium text-black whitespace-nowrap">
-                      <span className={`py-1 px-3 rounded-full bg-${log.level.toLowerCase()}-500 text-white`}>
+                      <span
+                        className={`py-1 px-3 rounded-full bg-${log.level.toLowerCase()}-500 text-white`}
+                      >
                         {log.level}
                       </span>
                     </th>
@@ -108,7 +110,7 @@ const IncidentTable = () => {
             </table>
           </div>
 
-          {totalPages > 1 && (
+          {pagination && totalPages > 1 && (
             <div className="flex flex-wrap justify-center items-center gap-2 mt-6">
               <button
                 className="px-3 py-1 rounded bg-gray-200 disabled:opacity-50 cursor-pointer text-sm"

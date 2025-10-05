@@ -19,6 +19,7 @@ import { onValue, ref } from "firebase/database";
 import { database } from "@/lib/firebase/firebase-client";
 import Section from "@/components/reusable/Section/Section";
 import { useAuthStore } from "@/stores/authStore";
+import IncidentTable from "../incidents/IncidentTable/IncidentTable";
 const sensorHistory = [
   {
     time: "10:00",
@@ -87,19 +88,12 @@ const Content = () => {
     if (smaller) return 300;
     return 230;
   })();
-  // const riskLevel = evaluateLandslideRisk(sensorData);
-  // const riskColor = {
-  //   High: "bg-red-500",
-  //   Medium: "bg-orange-500",
-  //   Low: "bg-green-500",
-  //   Good: "bg-yellow-400",
-  // };
+
   return (
     <Section>
       <div className="flex items-center gap-4 w-full justify-between">
         <div className="flex flex-col justify-between w-full lg:flex-row items-center">
           <h2 className="text-4xl manrope font-semibold">Dashboard</h2>
-          {/* ${riskColor[riskLevel]} */}
           <div
             className={`text-white text-xs px-4 py-2 rounded shadow bg-${sensorData?.warningLevel.color.toLowerCase()}-500`}
           >
@@ -113,14 +107,26 @@ const Content = () => {
           Current Sensor Data
         </h3>
         <ul className="mt-4 space-y-1 flex flex-col md:flex-row gap-2 w-full justify-center text-sm text-center">
-          <li className="px-4 py-1 rounded bg-secondary text-white">
-            💧 Moisture: {sensorData?.moisture.value ?? "N/A"}
+          <li className="p-4 rounded bg-secondary text-white w-[300px] h-full">
+            <div className="text-7xl">💧</div>
+            <div className="text-4xl my-4">
+              {sensorData?.moisture.value ?? "N/A"}
+            </div>
+            <h3 className="text-2xl manrope">Moisture</h3>
           </li>
-          <li className="px-4 py-1 rounded bg-secondary text-white">
-            🌧️ Rain: {sensorData?.rain.value ?? "N/A"}
+          <li className="p-4 rounded bg-secondary text-white w-[300px] h-full">
+            <div className="text-7xl">🌧️</div>
+            <div className="text-4xl my-4">
+              {sensorData?.rain.value ?? "N/A"}
+            </div>
+            <h3 className="text-2xl manrope">Rain</h3>
           </li>
-          <li className="px-4 py-1 rounded bg-secondary text-white">
-            ♒︎ Soil Vibration: {sensorData?.vibration.value ?? "N/A"}
+          <li className="p-4 rounded bg-secondary text-white w-[300px] h-full">
+            <div className="text-7xl">♒︎</div>
+            <div className="text-4xl my-4">
+              {sensorData?.vibration.value ?? "N/A"}
+            </div>
+            <h3 className="text-2xl manrope">Soil Vibration</h3>
           </li>
         </ul>
       </div>
@@ -185,6 +191,12 @@ const Content = () => {
               </LineChart>
             </div>
           </div>
+        </div>
+      )}
+      {!isAdmin && (
+        <div className="mt-12">
+          <h3 className="manrope text-2xl font-semibold">Recent Incidents</h3>
+          <IncidentTable pagination={false} />
         </div>
       )}
     </Section>
