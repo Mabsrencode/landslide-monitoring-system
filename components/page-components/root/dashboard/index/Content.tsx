@@ -102,34 +102,36 @@ const Content = () => {
           </div>
         </div>
       </div>
-      <div className="p-4 border border-black/20 rounded mt-6">
-        <h3 className="font-semibold text-2xl manrope text-center">
-          Current Sensor Data
-        </h3>
-        <ul className="mt-4 space-y-1 flex flex-col md:flex-row gap-2 w-full justify-center text-sm text-center">
-          <li className="p-4 rounded bg-secondary text-white w-[300px] h-full">
-            <div className="text-7xl">💧</div>
-            <div className="text-4xl my-4">
-              {sensorData?.moisture.value ?? "N/A"}
-            </div>
-            <h3 className="text-2xl manrope">Moisture</h3>
-          </li>
-          <li className="p-4 rounded bg-secondary text-white w-[300px] h-full">
-            <div className="text-7xl">🌧️</div>
-            <div className="text-4xl my-4">
-              {sensorData?.rain.value ?? "N/A"}
-            </div>
-            <h3 className="text-2xl manrope">Rain</h3>
-          </li>
-          <li className="p-4 rounded bg-secondary text-white w-[300px] h-full">
-            <div className="text-7xl">♒︎</div>
-            <div className="text-4xl my-4">
-              {sensorData?.vibration.value ?? "N/A"}
-            </div>
-            <h3 className="text-2xl manrope">Soil Vibration</h3>
-          </li>
-        </ul>
-      </div>
+      {!isAdmin && (
+        <div className="p-4 border border-black/20 rounded mt-6">
+          <h3 className="font-semibold text-2xl manrope text-center">
+            Current Sensor Data
+          </h3>
+          <ul className="mt-4 space-y-1 flex flex-col md:flex-row gap-2 w-full justify-center text-sm text-center">
+            <li className="p-4 rounded bg-secondary text-white w-[300px] h-full">
+              <div className="text-7xl">💧</div>
+              <div className="text-4xl my-4">
+                {sensorData?.moisture.value ?? "N/A"}
+              </div>
+              <h3 className="text-2xl manrope">Moisture</h3>
+            </li>
+            <li className="p-4 rounded bg-secondary text-white w-[300px] h-full">
+              <div className="text-7xl">🌧️</div>
+              <div className="text-4xl my-4">
+                {sensorData?.rain.value ?? "N/A"}
+              </div>
+              <h3 className="text-2xl manrope">Rain</h3>
+            </li>
+            <li className="p-4 rounded bg-secondary text-white w-[300px] h-full">
+              <div className="text-7xl">♒︎</div>
+              <div className="text-4xl my-4">
+                {sensorData?.vibration.value ?? "N/A"}
+              </div>
+              <h3 className="text-2xl manrope">Soil Vibration</h3>
+            </li>
+          </ul>
+        </div>
+      )}
       {isAdmin && (
         <div className="mt-4 space-y-6 p-4 border border-black/20 rounded">
           <h3 className="font-semibold text-4xl mb-2 text-center">History</h3>
