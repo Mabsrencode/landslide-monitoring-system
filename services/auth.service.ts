@@ -76,7 +76,7 @@ class AuthService {
         lastName,
         contactNumber,
         emailVerified: false,
-        role: "user",
+        role: "resident",
         status: "pending_verification",
         createdAt: nowISOString(),
         updatedAt: nowISOString(),

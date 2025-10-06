@@ -12,7 +12,8 @@ export function startSensorCron() {
     return;
   }
   cronStarted = true;
-  cron.schedule("*/10 * * * * *", async () => {
+  // */10 * * * * *
+  cron.schedule("0 * * * *", async () => {
     try {
       const snapshot = await get(ref(database, "sensors/"));
       const latestData = snapshot.val();
