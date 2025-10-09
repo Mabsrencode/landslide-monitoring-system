@@ -28,6 +28,7 @@ class UserService {
       lastName?: string;
       email?: string;
       profileImage?: string | null;
+      role?: "user" | "admin";
     }
   ) => {
     try {
@@ -50,6 +51,10 @@ class UserService {
           data.lastName || userRecord.displayName?.split(" ")[1] || "";
         authUpdates.displayName =
           `${updates.firstName} ${updates.lastName}`.trim();
+      }
+
+      if (data.role) {
+        updates.role = data.role;
       }
 
       let requiresVerification = false;
