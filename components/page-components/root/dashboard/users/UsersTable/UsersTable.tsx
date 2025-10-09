@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { FaUserShield, FaUser } from "react-icons/fa";
+import { FaUserShield, FaUser, FaUserClock } from "react-icons/fa";
 import GlobalSpinningLoader from "@/components/reusable/SpinnerLoader/GlobalSpinningLoader";
 import { UseGetResponse } from "@/hooks/useGetResponse";
 import { formatDateTime } from "@/utils/formatDateTime";
@@ -104,8 +104,8 @@ const UsersTable = () => {
                   <th className="px-6 py-3">Email</th>
                   <th className="px-6 py-3">Status</th>
                   <th className="px-6 py-3">Role</th>
-                  <th className="px-6 py-3 text-right">Actions</th>
                   <th className="px-6 py-3">Created At</th>
+                  <th className="px-6 py-3 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -120,10 +120,13 @@ const UsersTable = () => {
                     <td className="px-6 py-4">{user.email}</td>
                     <td className="px-6 py-4">{user.status}</td>
                     <td className="px-6 py-4 capitalize">{user.role}</td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-4">
+                      {formatDateTime(user.createdAt)}
+                    </td>
+                    <td className="px-6 py-4">
                       <button
                         disabled={
-                          isUpdating || user.email === "pending_verification"
+                          isUpdating || user.status === "pending_verification"
                         }
                         onClick={() =>
                           changeRole({
@@ -137,21 +140,24 @@ const UsersTable = () => {
                               ? "bg-blue-500 hover:bg-blue-600"
                               : "bg-green-500 hover:bg-green-600"
                           }
-                          disabled:opacity-50 transition`}
+                          disabled:opacity-50 transition disabled:bg-gray-500 disabled:cursor-not-allowed`}
                       >
-                        {user.role === "admin" ? (
+                        {user.status === "pending_verification" ? (
                           <>
-                            <FaUser className="text-white" /> Set User
+                            <FaUserClock className="text-white text-xl" /> Not
+                            Verified
+                          </>
+                        ) : user.role === "admin" ? (
+                          <>
+                            <FaUser className="text-white text-xl" /> Set User
                           </>
                         ) : (
                           <>
-                            <FaUserShield className="text-white" /> Set Admin
+                            <FaUserShield className="text-white text-xl" /> Set
+                            Admin
                           </>
                         )}
                       </button>
-                    </td>
-                    <td className="px-6 py-4">
-                      {formatDateTime(user.createdAt)}
                     </td>
                   </tr>
                 ))}

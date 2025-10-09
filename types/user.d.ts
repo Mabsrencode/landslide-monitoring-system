@@ -20,7 +20,7 @@ type UserData = {
   firstName: string;
   lastName: string;
   role: "user" | "admin";
-  status: "active" | "inactive";
+  status: "active" | "inactive" | "pending_verification";
   uid: string;
   updatedAt: string;
   username: string;
