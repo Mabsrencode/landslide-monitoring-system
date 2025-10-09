@@ -99,6 +99,19 @@ const Content = () => {
       staleTime: 5 * 60 * 1000,
       enabled: !!isAdmin,
     });
+  const { data: incidentData, isPending: isLoadingIncidentData } = useQuery<
+    LogsProps[] | null
+  >({
+    queryKey: ["incidents"],
+    queryFn: async () => UseGetResponse("/api/monitor/incidents"),
+    staleTime: 5 * 60 * 1000,
+  });
+  const { data: noOfUsers, isFetching: isLoadingNoOfUser } =
+    useQuery<UserListResponse>({
+      queryKey: ["users"],
+      queryFn: async () => UseGetResponse("/api/account/all-users"),
+      staleTime: 5 * 60 * 1000,
+    });
 
   const numberOfVerifiedResidents =
     usersData &&
@@ -130,22 +143,28 @@ const Content = () => {
                     {numberOfVerifiedResidents?.length}
                   </div>
                 )}
-                <h3 className="text-2xl manrope">Residents</h3>
+                <h3 className="text-2xl manrope">Verified Residents</h3>
               </div>
             </li>
-            <li className="p-4 rounded bg-secondary text-white w-[300px] h-full">
-              <div className="text-7xl">🌧️</div>
-              <div className="text-4xl my-4">
-                {sensorData?.rain.value ?? "N/A"}
+            <li className="p-4 rounded bg-secondary text-white w-[300px] min-h-fit flex items-center justify-center">
+              <div>
+                {isLoadingIncidentData ? (
+                  <div className="w-[50px] h-[50px] border-3 mx-auto border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <div className="text-4xl my-4">{incidentData?.length}</div>
+                )}
+                <h3 className="text-2xl manrope">Incidents</h3>
               </div>
-              <h3 className="text-2xl manrope">Rain</h3>
             </li>
-            <li className="p-4 rounded bg-secondary text-white w-[300px] h-full">
-              <div className="text-7xl">♒︎</div>
-              <div className="text-4xl my-4">
-                {sensorData?.vibration.value ?? "N/A"}
+            <li className="p-4 rounded bg-secondary text-white w-[300px] min-h-fit flex items-center justify-center">
+              <div>
+                {isLoadingNoOfUser ? (
+                  <div className="w-[50px] h-[50px] border-3 mx-auto border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <div className="text-4xl my-4">{noOfUsers?.data?.length}</div>
+                )}
+                <h3 className="text-2xl manrope">No of Users</h3>
               </div>
-              <h3 className="text-2xl manrope">Soil Vibration</h3>
             </li>
           </ul>
         </div>

@@ -5,12 +5,7 @@ import { formatDateTime } from "@/utils/formatDateTime";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 
-interface LogsProps {
-  type: string;
-  message: string;
-  createdAt: string;
-  level: string;
-}
+
 
 const IncidentTable = ({ pagination }: { pagination: boolean }) => {
   const [currentPage, setCurrentPage] = useState(1);

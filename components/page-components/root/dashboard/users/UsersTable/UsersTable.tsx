@@ -18,7 +18,6 @@ const UsersTable = () => {
     queryFn: async () => UseGetResponse("/api/account/all-users"),
     staleTime: 5 * 60 * 1000,
   });
-  console.log(usersData);
   if (error)
     return (
       <div className="text-2xl font-semibold manrope">
