@@ -1,13 +1,19 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { FaUserShield, FaUser, FaUserClock } from "react-icons/fa";
+import { FaUserShield, FaUser, FaUserClock, FaSearch } from "react-icons/fa";
 import GlobalSpinningLoader from "@/components/reusable/SpinnerLoader/GlobalSpinningLoader";
 import { UseGetResponse } from "@/hooks/useGetResponse";
 import { formatDateTime } from "@/utils/formatDateTime";
 
 const UsersTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [roleFilter, setRoleFilter] = useState<"all" | "user" | "admin">("all");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "active" | "inactive" | "pending_verification"
+  >("all");
+  const [searchTerm, setSearchTerm] = useState("");
+
   const pageSize = 10;
   const queryClient = useQueryClient();
 
@@ -45,15 +51,38 @@ const UsersTable = () => {
 
   if (error)
     return (
-      <div className="text-2xl font-semibold manrope">
+      <div className="text-2xl font-semibold manrope text-red-500">
         <h3>{error.message}</h3>
       </div>
     );
 
-  const totalLogs = usersData?.data?.length || 0;
+  const filteredUsers = useMemo(() => {
+    let users = usersData?.data || [];
+
+    if (roleFilter !== "all") {
+      users = users.filter((user) => user.role === roleFilter);
+    }
+
+    if (statusFilter !== "all") {
+      users = users.filter((user) => user.status === statusFilter);
+    }
+
+    if (searchTerm.trim()) {
+      const lower = searchTerm.toLowerCase();
+      users = users.filter(
+        (u) =>
+          u.email.toLowerCase().includes(lower) ||
+          `${u.firstName} ${u.lastName}`.toLowerCase().includes(lower)
+      );
+    }
+
+    return users;
+  }, [usersData, roleFilter, statusFilter, searchTerm]);
+
+  const totalLogs = filteredUsers.length;
   const totalPages = Math.ceil(totalLogs / pageSize);
 
-  const usersList = usersData?.data?.slice(
+  const usersList = filteredUsers.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
@@ -92,11 +121,60 @@ const UsersTable = () => {
 
   return (
     <>
+      <div className="flex flex-wrap gap-4 items-center justify-between mt-6 mb-4">
+        <div className="flex flex-wrap gap-2 items-center">
+          <select
+            value={roleFilter}
+            onChange={(e) => {
+              setRoleFilter(e.target.value as "all" | "user" | "admin");
+              setCurrentPage(1);
+            }}
+            className="px-3 py-2 border rounded-md text-sm outline-none border-accent"
+          >
+            <option value="all">All Roles</option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+          <select
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(
+                e.target.value as
+                  | "all"
+                  | "active"
+                  | "inactive"
+                  | "pending_verification"
+              );
+              setCurrentPage(1);
+            }}
+            className="px-3 py-2 border rounded-md text-sm outline-none border-accent"
+          >
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="pending_verification">Pending Verification</option>
+          </select>
+        </div>
+        <div className="relative w-full sm:w-[250px]">
+          <input
+            type="text"
+            placeholder="Search by name or email..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="w-full px-3 py-2 pl-9 border rounded-md text-sm outline-none border-accent"
+          />
+          <FaSearch className="absolute left-2 top-3 text-gray-500" />
+        </div>
+      </div>
+
       {isLoading ? (
         <GlobalSpinningLoader variant="big" />
       ) : (
         <>
-          <div className="relative overflow-x-auto mt-12 rounded-xl">
+          <div className="relative overflow-x-auto rounded-xl">
             <table className="w-full text-sm text-left rtl:text-right text-gray-700 table-auto">
               <thead className="text-xs text-white uppercase bg-secondary border border-gray-500">
                 <tr>
@@ -109,58 +187,69 @@ const UsersTable = () => {
                 </tr>
               </thead>
               <tbody>
-                {usersList?.map((user) => (
-                  <tr
-                    key={user.uid}
-                    className="border bg-gray-50 border-gray-300"
-                  >
-                    <td className="px-6 py-4 font-medium text-black whitespace-nowrap">
-                      {user.firstName} {user.lastName}
-                    </td>
-                    <td className="px-6 py-4">{user.email}</td>
-                    <td className="px-6 py-4">{user.status}</td>
-                    <td className="px-6 py-4 capitalize">{user.role}</td>
-                    <td className="px-6 py-4">
-                      {formatDateTime(user.createdAt)}
-                    </td>
-                    <td className="px-6 py-4">
-                      <button
-                        disabled={
-                          isUpdating || user.status === "pending_verification"
-                        }
-                        onClick={() =>
-                          changeRole({
-                            uid: user.uid,
-                            newRole: user.role === "admin" ? "user" : "admin",
-                          })
-                        }
-                        className={`px-3 py-2 rounded text-white flex items-center gap-2 ml-auto w-full justify-center cursor-pointer
-                          ${
-                            user.role === "admin"
-                              ? "bg-blue-500 hover:bg-blue-600"
-                              : "bg-green-500 hover:bg-green-600"
+                {usersList.length > 0 ? (
+                  usersList.map((user) => (
+                    <tr
+                      key={user.uid}
+                      className="border bg-gray-50 border-gray-300"
+                    >
+                      <td className="px-6 py-4 font-medium text-black whitespace-nowrap">
+                        {user.firstName} {user.lastName}
+                      </td>
+                      <td className="px-6 py-4">{user.email}</td>
+                      <td className="px-6 py-4 capitalize">{user.status}</td>
+                      <td className="px-6 py-4 capitalize">{user.role}</td>
+                      <td className="px-6 py-4">
+                        {formatDateTime(user.createdAt)}
+                      </td>
+                      <td className="px-6 py-4">
+                        <button
+                          disabled={
+                            isUpdating || user.status === "pending_verification"
                           }
-                          disabled:opacity-50 transition disabled:bg-gray-500 disabled:cursor-not-allowed`}
-                      >
-                        {user.status === "pending_verification" ? (
-                          <>
-                            <FaUserClock className="text-white text-xl" /> Not
-                            Verified
-                          </>
-                        ) : user.role === "admin" ? (
-                          <>
-                            <FaUser className="text-white text-xl" /> Set User
-                          </>
-                        ) : (
-                          <>
-                            <FaUserShield className="text-white text-xl" /> Set
-                            Admin
-                          </>
-                        )}
-                      </button>
+                          onClick={() =>
+                            changeRole({
+                              uid: user.uid,
+                              newRole: user.role === "admin" ? "user" : "admin",
+                            })
+                          }
+                          className={`px-3 py-2 rounded text-white flex items-center gap-2 ml-auto w-full justify-center cursor-pointer
+                            ${
+                              user.role === "admin"
+                                ? "bg-blue-500 hover:bg-blue-600"
+                                : "bg-green-500 hover:bg-green-600"
+                            }
+                            disabled:opacity-50 transition disabled:bg-gray-500 disabled:cursor-not-allowed`}
+                        >
+                          {user.status === "pending_verification" ? (
+                            <>
+                              <FaUserClock className="text-white text-xl" /> Not
+                              Verified
+                            </>
+                          ) : user.role === "admin" ? (
+                            <>
+                              <FaUser className="text-white text-xl" /> Set User
+                            </>
+                          ) : (
+                            <>
+                              <FaUserShield className="text-white text-xl" />{" "}
+                              Set Admin
+                            </>
+                          )}
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="text-center py-6 text-gray-500 text-sm"
+                    >
+                      No users match your filters.
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
@@ -207,12 +296,6 @@ const UsersTable = () => {
             </div>
           )}
         </>
-      )}
-
-      {!isLoading && usersData?.data?.length === 0 && (
-        <div className="mt-6 text-center">
-          <h3 className="text-2xl manrope font-semibold">No users found.</h3>
-        </div>
       )}
     </>
   );
