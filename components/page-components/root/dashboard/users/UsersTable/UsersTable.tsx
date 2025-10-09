@@ -48,16 +48,9 @@ const UsersTable = () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
   });
-
-  if (error)
-    return (
-      <div className="text-2xl font-semibold manrope text-red-500">
-        <h3>{error.message}</h3>
-      </div>
-    );
-
   const filteredUsers = useMemo(() => {
-    let users = usersData?.data || [];
+    if (!usersData?.data) return [];
+    let users = usersData.data;
 
     if (roleFilter !== "all") {
       users = users.filter((user) => user.role === roleFilter);
@@ -78,6 +71,13 @@ const UsersTable = () => {
 
     return users;
   }, [usersData, roleFilter, statusFilter, searchTerm]);
+
+  if (error)
+    return (
+      <div className="text-2xl font-semibold manrope text-red-500">
+        <h3>{error.message}</h3>
+      </div>
+    );
 
   const totalLogs = filteredUsers.length;
   const totalPages = Math.ceil(totalLogs / pageSize);
