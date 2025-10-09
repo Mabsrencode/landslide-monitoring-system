@@ -5,7 +5,7 @@ import MapComponent from "@/components/reusable/Map";
 const Content = () => {
   return (
     <Section>
-      <h3 className="text-3xl manrope text-center mt-4">Detector locations</h3>
+      <h3 className="text-3xl manrope text-center mt-4">Device Locations</h3>
       <div className="mt-2 h-[600px] w-[80%] mx-auto ">
         <MapComponent />
       </div>

@@ -4,8 +4,10 @@ import GlobalSpinningLoader from "@/components/reusable/SpinnerLoader/GlobalSpin
 import { UseGetResponse } from "@/hooks/useGetResponse";
 import { formatDateTime } from "@/utils/formatDateTime";
 import { useQuery } from "@tanstack/react-query";
+import { useAuthStore } from "@/stores/authStore";
 
 const IncidentTable = ({ pagination }: { pagination: boolean }) => {
+  const { user } = useAuthStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -77,6 +79,13 @@ const IncidentTable = ({ pagination }: { pagination: boolean }) => {
     return pages;
   };
 
+  const visibleLogs =
+    user?.role === "user"
+      ? filteredLogs.slice(0, 3)
+      : filteredLogs.slice(
+          (currentPage - 1) * pageSize,
+          currentPage * pageSize
+        );
   if (error)
     return (
       <div className="text-2xl font-semibold manrope text-red-500">
@@ -90,18 +99,20 @@ const IncidentTable = ({ pagination }: { pagination: boolean }) => {
         <GlobalSpinningLoader variant="big" />
       ) : (
         <>
-          <div className="flex flex-wrap items-center justify-end gap-4">
-            <input
-              type="text"
-              placeholder="Search by message..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="outline-none border-accent border rounded px-3 py-2 w-72 text-sm"
-            />
-          </div>
+          {user && user.role === "admin" && (
+            <div className="flex flex-wrap items-center justify-end gap-4">
+              <input
+                type="text"
+                placeholder="Search by message..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="outline-none border-accent border rounded px-3 py-2 w-72 text-sm"
+              />
+            </div>
+          )}
 
           <div className="relative overflow-x-auto rounded-xl mt-8">
             <table className="w-full text-sm text-left text-gray-700 table-auto">
@@ -114,7 +125,7 @@ const IncidentTable = ({ pagination }: { pagination: boolean }) => {
                 </tr>
               </thead>
               <tbody>
-                {currentLogs.map((log, index) => (
+                {visibleLogs.map((log, index) => (
                   <tr key={index} className="border bg-gray-50 border-gray-300">
                     <td className="px-6 py-4 font-medium text-black whitespace-nowrap">
                       <span

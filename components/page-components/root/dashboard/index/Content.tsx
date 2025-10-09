@@ -164,8 +164,8 @@ const Content = () => {
       )}
       {!isAdmin && (
         <div className="p-4 border border-black/20 rounded mt-6">
-          <h3 className="font-semibold text-2xl manrope text-center">
-            Current Sensor Data
+          <h3 className="font-semibold text-2xl manrope text-center capitalize">
+            current readings
           </h3>
           <ul className="mt-4 space-y-1 flex flex-col md:flex-row gap-2 w-full justify-center text-sm text-center">
             <li className="p-4 rounded bg-secondary text-white w-[300px] h-full">
@@ -203,7 +203,9 @@ const Content = () => {
 
       {isAdmin && (
         <div className="mt-4 space-y-6 p-4 border border-black/20 rounded">
-          <h3 className="font-semibold text-4xl mb-2 text-center">History</h3>
+          <h3 className="font-semibold text-4xl mb-2 text-center capitalize">
+            Current readings
+          </h3>
           <div className="flex items-center justify-center">
             <div className="grid xl:grid-cols-2 gap-4">
               <LineChart
