@@ -1,14 +1,14 @@
 "use client";
+import React, { useState, useMemo } from "react";
 import GlobalSpinningLoader from "@/components/reusable/SpinnerLoader/GlobalSpinningLoader";
 import { UseGetResponse } from "@/hooks/useGetResponse";
 import { formatDateTime } from "@/utils/formatDateTime";
 import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
-
-
 
 const IncidentTable = ({ pagination }: { pagination: boolean }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+
   const pageSize = 10;
 
   const {
@@ -21,17 +21,26 @@ const IncidentTable = ({ pagination }: { pagination: boolean }) => {
     staleTime: 5 * 60 * 1000,
   });
 
-  if (error)
-    return (
-      <div className="text-2xl font-semibold manrope">
-        <h3>{error.message}</h3>
-      </div>
-    );
+  const filteredLogs = useMemo(() => {
+    if (!logsData) return [];
 
-  const totalLogs = logsData?.length || 0;
+    let logs = [...logsData];
+
+    if (searchTerm.trim()) {
+      const lower = searchTerm.toLowerCase();
+      logs = logs.filter(
+        (log) =>
+          log.message.toLowerCase().includes(lower) ||
+          log.type.toLowerCase().includes(lower)
+      );
+    }
+
+    return logs;
+  }, [logsData, searchTerm]);
+
+  const totalLogs = filteredLogs.length;
   const totalPages = Math.ceil(totalLogs / pageSize);
-
-  const currentLogs = logsData?.slice(
+  const currentLogs = filteredLogs.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
@@ -68,14 +77,34 @@ const IncidentTable = ({ pagination }: { pagination: boolean }) => {
     return pages;
   };
 
+  if (error)
+    return (
+      <div className="text-2xl font-semibold manrope text-red-500">
+        <h3>{error.message}</h3>
+      </div>
+    );
+
   return (
     <>
       {isLoading ? (
         <GlobalSpinningLoader variant="big" />
       ) : (
         <>
-          <div className="relative overflow-x-auto mt-12 rounded-xl">
-            <table className="w-full text-sm text-left rtl:text-right text-gray-700 table-auto">
+          <div className="flex flex-wrap items-center justify-end gap-4">
+            <input
+              type="text"
+              placeholder="Search by message..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="outline-none border-accent border rounded px-3 py-2 w-72 text-sm"
+            />
+          </div>
+
+          <div className="relative overflow-x-auto rounded-xl mt-8">
+            <table className="w-full text-sm text-left text-gray-700 table-auto">
               <thead className="text-xs text-white uppercase bg-secondary border border-gray-500">
                 <tr>
                   <th className="px-6 py-3">Level</th>
@@ -85,15 +114,15 @@ const IncidentTable = ({ pagination }: { pagination: boolean }) => {
                 </tr>
               </thead>
               <tbody>
-                {currentLogs?.map((log, index) => (
+                {currentLogs.map((log, index) => (
                   <tr key={index} className="border bg-gray-50 border-gray-300">
-                    <th className="px-6 py-4 font-medium text-black whitespace-nowrap">
+                    <td className="px-6 py-4 font-medium text-black whitespace-nowrap">
                       <span
                         className={`py-1 px-3 rounded-full bg-${log.level.toLowerCase()}-500 text-white`}
                       >
                         {log.level}
                       </span>
-                    </th>
+                    </td>
                     <td className="px-6 py-4">{log.message}</td>
                     <td className="px-6 py-4">{log.type}</td>
                     <td className="px-6 py-4">
@@ -149,10 +178,10 @@ const IncidentTable = ({ pagination }: { pagination: boolean }) => {
         </>
       )}
 
-      {!isLoading && logsData?.length === 0 && (
+      {!isLoading && filteredLogs.length === 0 && (
         <div className="mt-6 text-center">
-          <h3 className="text-2xl manrope font-semibold">
-            No logs have been found.
+          <h3 className="text-2xl manrope font-semibold text-gray-500">
+            No logs found.
           </h3>
         </div>
       )}

@@ -3,7 +3,7 @@ import GlobalSpinningLoader from "@/components/reusable/SpinnerLoader/GlobalSpin
 import { UseGetResponse } from "@/hooks/useGetResponse";
 import { formatDateTime } from "@/utils/formatDateTime";
 import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 
 interface LogsProps {
   actor: string;
@@ -14,6 +14,7 @@ interface LogsProps {
 
 const LogsTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const pageSize = 10;
 
   const {
@@ -25,18 +26,30 @@ const LogsTable = () => {
     queryFn: async () => UseGetResponse("/api/auth/logs"),
     staleTime: 5 * 60 * 1000,
   });
+  const filteredLogs = useMemo(() => {
+    if (!logsData) return [];
+
+    if (!searchTerm.trim()) return logsData;
+
+    const lower = searchTerm.toLowerCase();
+    return logsData.filter(
+      (log) =>
+        log.actor?.toLowerCase().includes(lower) ||
+        log.details?.toLowerCase().includes(lower)
+    );
+  }, [logsData, searchTerm]);
 
   if (error)
     return (
-      <div className="text-2xl font-semibold manrope">
+      <div className="text-2xl font-semibold manrope text-red-500">
         <h3>{error.message}</h3>
       </div>
     );
 
-  const totalLogs = logsData?.length || 0;
+  const totalLogs = filteredLogs.length;
   const totalPages = Math.ceil(totalLogs / pageSize);
 
-  const currentLogs = logsData?.slice(
+  const currentLogs = filteredLogs.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
@@ -79,7 +92,20 @@ const LogsTable = () => {
         <GlobalSpinningLoader variant="big" />
       ) : (
         <>
-          <div className="relative overflow-x-auto mt-12 rounded-xl">
+          <div className="flex justify-end">
+            <input
+              type="text"
+              placeholder="Search by email or details..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="border outline-none border-accent rounded px-3 py-2 text-sm w-72"
+            />
+          </div>
+
+          <div className="relative overflow-x-auto rounded-xl mt-8">
             <table className="w-full text-sm text-left rtl:text-right text-gray-700 table-auto">
               <thead className="text-xs text-white uppercase bg-secondary border border-gray-500">
                 <tr>
@@ -90,7 +116,7 @@ const LogsTable = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentLogs?.map((log, index) => (
+                {currentLogs.map((log, index) => (
                   <tr key={index} className="border bg-gray-50 border-gray-300">
                     <th className="px-6 py-4 font-medium text-black whitespace-nowrap">
                       {log.actor}
@@ -149,11 +175,10 @@ const LogsTable = () => {
           )}
         </>
       )}
-
-      {!isLoading && logsData?.length === 0 && (
+      {!isLoading && filteredLogs.length === 0 && (
         <div className="mt-6 text-center">
-          <h3 className="text-2xl manrope font-semibold">
-            No logs have been found.
+          <h3 className="text-2xl manrope font-semibold text-gray-500">
+            No logs found.
           </h3>
         </div>
       )}
