@@ -130,7 +130,7 @@ const Content = () => {
             <li className="p-4 rounded bg-secondary text-white w-[300px] min-h-fit flex items-center justify-center">
               <div>
                 {isLoadingUsersData ? (
-                  <div className="w-[50px] h-[50px] border-3 mx-auto border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-[50px] h-[50px] border-3 mx-auto border-white border-t-transparent rounded-full animate-spin mb-4"></div>
                 ) : (
                   <div className="text-4xl my-4">
                     {numberOfVerifiedResidents?.length}
@@ -142,7 +142,7 @@ const Content = () => {
             <li className="p-4 rounded bg-secondary text-white w-[300px] min-h-fit flex items-center justify-center">
               <div>
                 {isLoadingIncidentData ? (
-                  <div className="w-[50px] h-[50px] border-3 mx-auto border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-[50px] h-[50px] border-3 mx-auto border-white border-t-transparent rounded-full animate-spin mb-4"></div>
                 ) : (
                   <div className="text-4xl my-4">{incidentData?.length}</div>
                 )}
@@ -152,7 +152,7 @@ const Content = () => {
             <li className="p-4 rounded bg-secondary text-white w-[300px] min-h-fit flex items-center justify-center">
               <div>
                 {isLoadingNoOfUser ? (
-                  <div className="w-[50px] h-[50px] border-3 mx-auto border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-[50px] h-[50px] border-3 mx-auto border-white border-t-transparent rounded-full animate-spin mb-4"></div>
                 ) : (
                   <div className="text-4xl my-4">{noOfUsers?.data?.length}</div>
                 )}
@@ -171,27 +171,36 @@ const Content = () => {
             <li className="p-4 rounded bg-secondary text-white w-[300px] h-full">
               <div className="text-7xl">💧</div>
               <div className="text-4xl my-4">
-                {sensorData?.moisture.value ?? "N/A"}
+                {sensorData
+                  ? `${Math.round((sensorData.moisture.value / 4095) * 100)}%`
+                  : "N/A"}
               </div>
               <h3 className="text-2xl manrope">Moisture</h3>
             </li>
+
             <li className="p-4 rounded bg-secondary text-white w-[300px] h-full">
               <div className="text-7xl">🌧️</div>
               <div className="text-4xl my-4">
-                {sensorData?.rain.value ?? "N/A"}
+                {sensorData
+                  ? `${Math.round((sensorData.rain.value / 4095) * 100)}%`
+                  : "N/A"}
               </div>
               <h3 className="text-2xl manrope">Rain</h3>
             </li>
+
             <li className="p-4 rounded bg-secondary text-white w-[300px] h-full">
               <div className="text-7xl">♒︎</div>
               <div className="text-4xl my-4">
-                {sensorData?.vibration.value ?? "N/A"}
+                {sensorData
+                  ? `${Math.round((sensorData.vibration.value / 4095) * 100)}%`
+                  : "N/A"}
               </div>
               <h3 className="text-2xl manrope">Soil Vibration</h3>
             </li>
           </ul>
         </div>
       )}
+
       {isAdmin && (
         <div className="mt-4 space-y-6 p-4 border border-black/20 rounded">
           <h3 className="font-semibold text-4xl mb-2 text-center">History</h3>
