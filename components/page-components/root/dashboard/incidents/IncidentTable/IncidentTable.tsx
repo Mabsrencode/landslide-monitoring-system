@@ -48,10 +48,6 @@ const IncidentTable = ({
 
   const totalLogs = filteredLogs.length;
   const totalPages = Math.ceil(totalLogs / pageSize);
-  // const currentLogs = filteredLogs.slice(
-  //   (currentPage - 1) * pageSize,
-  //   currentPage * pageSize
-  // );
 
   const generatePageNumbers = () => {
     const pages: (number | string)[] = [];
