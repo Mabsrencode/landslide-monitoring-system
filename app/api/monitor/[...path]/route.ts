@@ -13,6 +13,10 @@ export async function GET(
       const response = await monitorService.getIncidents();
       return response;
     }
+    if (path.includes("sensor-history")) {
+      const response = await monitorService.getSensorHistory();
+      return response;
+    }
     return NextResponse.json({ message: "Invalid path" }, { status: 400 });
   } catch (error) {
     console.error("Server error:", error);

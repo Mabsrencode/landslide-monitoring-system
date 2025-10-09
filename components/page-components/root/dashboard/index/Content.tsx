@@ -23,51 +23,28 @@ import IncidentTable from "../incidents/IncidentTable/IncidentTable";
 import { useQuery } from "@tanstack/react-query";
 import { UseGetResponse } from "@/hooks/useGetResponse";
 import MainLoader from "@/components/reusable/MainLoader/MainLoader";
-const sensorHistory = [
-  {
-    time: "10:00",
-    vibration: 0.8,
-    soilMoisture: 70,
-    temperature: 65,
-    humidity: 78,
-  },
-  {
-    time: "10:30",
-    vibration: 1.1,
-    soilMoisture: 75,
-    temperature: 65,
-    humidity: 78,
-  },
-  {
-    time: "11:00",
-    vibration: 1.8,
-    soilMoisture: 85,
-    temperature: 65,
-    humidity: 78,
-  },
-];
 
+type NewType = {
+  moisture: {
+    value: number;
+    timestamp: string;
+  };
+  rain: {
+    value: number;
+    timestamp: string;
+  };
+  vibration: {
+    value: number;
+    timestamp: string;
+  };
+  warningLevel: {
+    color: string;
+    message: string;
+  };
+} | null;
 const Content = () => {
   const { user } = useAuthStore();
   const isAdmin = user?.role === "admin";
-  type NewType = {
-    moisture: {
-      value: number;
-      timestamp: string;
-    };
-    rain: {
-      value: number;
-      timestamp: string;
-    };
-    vibration: {
-      value: number;
-      timestamp: string;
-    };
-    warningLevel: {
-      color: string;
-      message: string;
-    };
-  } | null;
 
   const [sensorData, setSensorData] = useState<NewType>(null);
   useEffect(() => {
@@ -105,13 +82,29 @@ const Content = () => {
     queryKey: ["incidents"],
     queryFn: async () => UseGetResponse("/api/monitor/incidents"),
     staleTime: 5 * 60 * 1000,
+    enabled: !!isAdmin,
   });
   const { data: noOfUsers, isFetching: isLoadingNoOfUser } =
     useQuery<UserListResponse>({
       queryKey: ["users"],
       queryFn: async () => UseGetResponse("/api/account/all-users"),
       staleTime: 5 * 60 * 1000,
+      enabled: !!isAdmin,
     });
+
+  const { data: sensorHistoryData } = useQuery<SensorHistoryItem[]>({
+    queryKey: ["sensor-history"],
+    queryFn: async () => UseGetResponse("/api/monitor/sensor-history"),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const chartData: ChartDataPoint[] =
+    sensorHistoryData?.map((item) => ({
+      time: new Date(item.createdAt).toLocaleTimeString(),
+      moisture: item.moisture.value,
+      rain: item.rain.value,
+      vibration: item.vibration.value,
+    })) || [];
 
   const numberOfVerifiedResidents =
     usersData &&
@@ -207,7 +200,7 @@ const Content = () => {
               <LineChart
                 width={chartWidth}
                 height={250}
-                data={sensorHistory}
+                data={chartData}
                 className="border border-black/20 w-full p-2 rounded"
               >
                 <CartesianGrid strokeDasharray="3 3" />
@@ -217,7 +210,7 @@ const Content = () => {
                 <Legend />
                 <Line
                   type="monotone"
-                  dataKey="soilMoisture"
+                  dataKey="moisture"
                   stroke="#8884d8"
                   name="Soil Moisture"
                 />
@@ -225,7 +218,7 @@ const Content = () => {
               <LineChart
                 width={chartWidth}
                 height={250}
-                data={sensorHistory}
+                data={chartData}
                 className="border border-black/20 w-full p-2 rounded"
               >
                 <CartesianGrid strokeDasharray="3 3" />
@@ -236,14 +229,14 @@ const Content = () => {
                 <Line
                   type="monotone"
                   dataKey="vibration"
-                  stroke="#8884d8"
+                  stroke="#82ca9d"
                   name="Vibration"
                 />
               </LineChart>
               <LineChart
                 width={chartWidth}
                 height={250}
-                data={sensorHistory}
+                data={chartData}
                 className="border border-black/20 w-full p-2 rounded"
               >
                 <CartesianGrid strokeDasharray="3 3" />
@@ -253,9 +246,9 @@ const Content = () => {
                 <Legend />
                 <Line
                   type="monotone"
-                  dataKey="humidity"
-                  stroke="#8884d8"
-                  name="Humidity"
+                  dataKey="rain"
+                  stroke="#ff7300"
+                  name="Rain"
                 />
               </LineChart>
             </div>

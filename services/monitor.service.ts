@@ -21,6 +21,18 @@ class MonitorService {
       return errorRes(error);
     }
   };
+
+  public getSensorHistory = async () => {
+    const response = await getDocs(collection(db, "sensorHistory"));
+    try {
+      const data = response.docs;
+      const formattedData = data.map((e) => e.data());
+      return jsonRes(formattedData, 200);
+    } catch (error) {
+      console.log(error);
+      return errorRes(error);
+    }
+  };
 }
 
 export default MonitorService;
