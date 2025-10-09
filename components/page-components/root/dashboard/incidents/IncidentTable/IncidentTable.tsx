@@ -6,7 +6,13 @@ import { formatDateTime } from "@/utils/formatDateTime";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/authStore";
 
-const IncidentTable = ({ pagination }: { pagination: boolean }) => {
+const IncidentTable = ({
+  pagination,
+  publicComponent,
+}: {
+  pagination: boolean;
+  publicComponent?: boolean;
+}) => {
   const { user } = useAuthStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
@@ -80,7 +86,7 @@ const IncidentTable = ({ pagination }: { pagination: boolean }) => {
   };
 
   const visibleLogs =
-    user?.role === "user"
+    user?.role === "user" || publicComponent
       ? filteredLogs.slice(0, 3)
       : filteredLogs.slice(
           (currentPage - 1) * pageSize,
