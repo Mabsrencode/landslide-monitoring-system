@@ -17,47 +17,48 @@ import { IoIosClose } from "react-icons/io";
 import { useMutation } from "@tanstack/react-query";
 import SpinnerLoader from "@/components/reusable/SpinnerLoader/SpinnerLoader";
 import toast from "react-hot-toast";
-import {  IoPeopleSharp } from "react-icons/io5";
+import { IoNotificationsCircleOutline, IoPeopleSharp } from "react-icons/io5";
 import { FaMapMarkedAlt } from "react-icons/fa";
-const navigationItems = [
-  {
-    link: "/dashboard",
-    name: "Dashboard",
-    icon: <MdSpaceDashboard />,
-  },
-  {
-    link: "/dashboard/map",
-    name: "Map",
-    icon: <FaMapMarkedAlt />,
-  },
-  // {
-  //   link: "/dashboard/notifications",
-  //   name: "Notifications",
-  //   icon: <IoNotificationsCircleOutline />,
-  //   adminOnly: true,
-  // },
-  {
-    link: "/dashboard/logs",
-    name: "Logs",
-    icon: <LuLogs />,
-    adminOnly: true,
-  },
-  {
-    link: "/dashboard/incidents",
-    name: "Alerts",
-    icon: <CiWarning />,
-  },
-  {
-    link: "/dashboard/users",
-    name: "Users",
-    icon: <IoPeopleSharp />,
-    adminOnly: true,
-  },
-];
+
 const PrivateSidebar = () => {
   const router = useRouter();
   const [openProfileContainer, setOpenProfileContainer] = useState(false);
   const { user, setUser } = useAuthStore();
+  const navigationItems = [
+    {
+      link: "/dashboard",
+      name: "Dashboard",
+      icon: <MdSpaceDashboard />,
+    },
+    {
+      link: "/dashboard/map",
+      name: user && user.role === "admin" ? "Device location" : "At risk place",
+      icon: <FaMapMarkedAlt />,
+    },
+    {
+      link: "/dashboard/notifications",
+      name: "Announcement",
+      icon: <IoNotificationsCircleOutline />,
+      adminOnly: true,
+    },
+    {
+      link: "/dashboard/logs",
+      name: "Logs",
+      icon: <LuLogs />,
+      adminOnly: true,
+    },
+    {
+      link: "/dashboard/incidents",
+      name: "Alerts",
+      icon: <CiWarning />,
+    },
+    {
+      link: "/dashboard/users",
+      name: "Users",
+      icon: <IoPeopleSharp />,
+      adminOnly: true,
+    },
+  ];
   const pathname = usePathname();
   const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(false);
   const handleLogOut = async () => {
@@ -92,7 +93,7 @@ const PrivateSidebar = () => {
   return (
     <aside
       className={`sticky z-[1000] top-0 left-0 py-6 transition-all bg-white text-white h-screen flex flex-col justify-between items-center ${
-        isSideBarOpen ? "w-[150px]" : "w-[60px]"
+        isSideBarOpen ? "w-[200px]" : "w-[60px]"
       } border-r border-black/10 shadow`}
     >
       <div className="flex flex-col items-center">

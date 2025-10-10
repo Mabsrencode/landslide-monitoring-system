@@ -7,7 +7,7 @@ const Content = () => {
   return (
     <Section>
       <BackRoute />
-      <h2 className="text-4xl manrope font-semibold">Incidents</h2>
+      <h2 className="text-4xl manrope font-semibold">Alerts</h2>
       <IncidentTable pagination />
     </Section>
   );
