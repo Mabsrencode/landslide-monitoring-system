@@ -29,6 +29,7 @@ class UserService {
       email?: string;
       profileImage?: string | null;
       role?: "user" | "admin";
+      status?: "active" | "inactive" | "pending_verification";
     }
   ) => {
     try {
@@ -51,6 +52,10 @@ class UserService {
           data.lastName || userRecord.displayName?.split(" ")[1] || "";
         authUpdates.displayName =
           `${updates.firstName} ${updates.lastName}`.trim();
+      }
+
+      if (data.status) {
+        updates.status = data.status;
       }
 
       if (data.role) {

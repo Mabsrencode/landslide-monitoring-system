@@ -339,6 +339,22 @@ const UsersTable: React.FC = () => {
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
               </select>
+              <select
+                value={editingUser.status}
+                onChange={(e) =>
+                  setEditingUser({
+                    ...editingUser,
+                    status: e.target.value as UserStatus,
+                  })
+                }
+                className="border px-3 py-2 rounded border-accent outline-none"
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="pending_verification">
+                  Pending Verification
+                </option>
+              </select>
             </div>
 
             <div className="flex justify-end gap-3 mt-5">
