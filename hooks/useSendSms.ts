@@ -2,9 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
 export interface SmsPayload {
-  number: string;
   message: string;
-  sendername?: string;
 }
 
 export function useSendSms() {

@@ -241,10 +241,14 @@ const Content = () => {
           <label className="flex flex-col manrope font-semibold text-sm relative w-full">
             Contact Number
             <input
-              type="text"
+              type="number"
               placeholder="Contact Number"
               {...register("contactNumber", {
                 required: "Contact Number is required",
+                maxLength: {
+                  value: 11,
+                  message: "Contact number must not exceed 11 numbers.",
+                },
               })}
               className="border border-black/20 outline-none p-2  font-normal mt-2 bg-slate-100"
             />
