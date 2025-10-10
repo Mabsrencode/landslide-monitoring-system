@@ -70,14 +70,34 @@ const Content = () => {
         )}
 
         <ul className="mt-4 space-y-1 flex flex-col md:flex-row gap-2 w-full justify-center text-sm text-center">
-          <li className="px-4 py-1 rounded bg-secondary text-white">
-            💧 Moisture: {sensorData?.moisture.value ?? "N/A"}
+          <li className="p-4 rounded bg-secondary text-white w-[300px] h-full">
+            <div className="text-7xl">💧</div>
+            <div className="text-4xl my-4">
+              {sensorData
+                ? `${Math.round((sensorData.moisture.value / 4095) * 100)}%`
+                : "N/A"}
+            </div>
+            <h3 className="text-2xl manrope">Moisture</h3>
           </li>
-          <li className="px-4 py-1 rounded bg-secondary text-white">
-            🌧️ Rain: {sensorData?.rain.value ?? "N/A"}
+
+          <li className="p-4 rounded bg-secondary text-white w-[300px] h-full">
+            <div className="text-7xl">🌧️</div>
+            <div className="text-4xl my-4">
+              {sensorData
+                ? `${Math.round((sensorData.rain.value / 4095) * 100)}%`
+                : "N/A"}
+            </div>
+            <h3 className="text-2xl manrope">Rain</h3>
           </li>
-          <li className="px-4 py-1 rounded bg-secondary text-white">
-            ♒︎ Soil Vibration: {sensorData?.vibration.value ?? "N/A"}
+
+          <li className="p-4 rounded bg-secondary text-white w-[300px] h-full">
+            <div className="text-7xl">♒︎</div>
+            <div className="text-4xl my-4">
+              {sensorData
+                ? `${Math.round((sensorData.vibration.value / 4095) * 100)}%`
+                : "N/A"}
+            </div>
+            <h3 className="text-2xl manrope">Soil Vibration</h3>
           </li>
         </ul>
       </div>
