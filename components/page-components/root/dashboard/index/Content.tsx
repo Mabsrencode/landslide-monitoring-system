@@ -24,29 +24,11 @@ import { useQuery } from "@tanstack/react-query";
 import { UseGetResponse } from "@/hooks/useGetResponse";
 import MainLoader from "@/components/reusable/MainLoader/MainLoader";
 
-type NewType = {
-  moisture: {
-    value: number;
-    timestamp: string;
-  };
-  rain: {
-    value: number;
-    timestamp: string;
-  };
-  vibration: {
-    value: number;
-    timestamp: string;
-  };
-  warningLevel: {
-    color: string;
-    message: string;
-  };
-} | null;
 const Content = () => {
   const { user } = useAuthStore();
   const isAdmin = user?.role === "admin";
 
-  const [sensorData, setSensorData] = useState<NewType>(null);
+  const [sensorData, setSensorData] = useState<RealtimeSensorData>(null);
   useEffect(() => {
     const dataRef = ref(database, "sensors/");
 

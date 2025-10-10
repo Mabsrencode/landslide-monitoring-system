@@ -8,26 +8,7 @@ import React, { useEffect, useState } from "react";
 import IncidentTable from "../dashboard/incidents/IncidentTable/IncidentTable";
 
 const Content = () => {
-  type NewType = {
-    moisture: {
-      value: number;
-      timestamp: string;
-    };
-    rain: {
-      value: number;
-      timestamp: string;
-    };
-    vibration: {
-      value: number;
-      timestamp: string;
-    };
-    warningLevel: {
-      color: string;
-      message: string;
-    };
-  } | null;
-
-  const [sensorData, setSensorData] = useState<NewType>(null);
+  const [sensorData, setSensorData] = useState<RealtimeSensorData>(null);
 
   useEffect(() => {
     const dataRef = ref(database, "sensors/");
@@ -105,12 +86,21 @@ const Content = () => {
         <h3 className="manrope text-2xl font-semibold">Recent Incidents</h3>
         <IncidentTable pagination={false} publicComponent />
       </div>
-      <div className="mt-12">
-        <h3 className="text-3xl manrope text-center mt-4">At risk place</h3>
-        <div className="mt-2 h-[600px] w-[80%] mx-auto ">
-          <MapComponent />
-        </div>
-      </div>
+      {sensorData &&
+        sensorData.coordinates &&
+        sensorData.warningLevel.color && (
+          <div className="mt-12">
+            <h3 className="text-3xl manrope text-center mt-4">At risk place</h3>
+            <div className="mt-2 h-[600px] w-[80%] mx-auto ">
+              <MapComponent
+                latitude={sensorData.coordinates.latitude}
+                longitude={sensorData.coordinates.longitude}
+                color={sensorData.warningLevel.color}
+                title="Zone 1"
+              />
+            </div>
+          </div>
+        )}
     </Section>
   );
 };

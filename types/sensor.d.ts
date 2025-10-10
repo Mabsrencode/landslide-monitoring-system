@@ -22,3 +22,26 @@ interface ChartDataPoint {
   rain: number;
   vibration: number;
 }
+
+type RealtimeSensorData = {
+  coordinates: {
+    latitude: number;
+    longitude: number;
+  };
+  moisture: {
+    value: number;
+    timestamp: string;
+  };
+  rain: {
+    value: number;
+    timestamp: string;
+  };
+  vibration: {
+    value: number;
+    timestamp: string;
+  };
+  warningLevel: {
+    color: string;
+    message: string;
+  };
+} | null;
