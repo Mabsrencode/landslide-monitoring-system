@@ -29,11 +29,29 @@ const Content = () => {
       ).toLocaleString()
     : null;
 
+  let statusColor: string;
+  switch (sensorData?.warningLevel.color) {
+    case "RED":
+      statusColor = "bg-red-500";
+      break;
+    case "ORANGE":
+      statusColor = "bg-orange-500";
+      break;
+    case "YELLOW":
+      statusColor = "bg-yellow-300";
+      break;
+    case "GREEN":
+      statusColor = "bg-green-400";
+      break;
+    default:
+      statusColor = "bg-green-500";
+  }
+
   return (
     <Section>
       <BackRoute />
       <div
-        className={`text-white text-2xl text-center px-4 py-2 rounded shadow bg-${sensorData?.warningLevel.color.toLowerCase()}-500`}
+        className={`text-white text-2xl text-center px-4 py-2 rounded shadow ${statusColor}`}
       >
         Landslide Risk Level:{" "}
         <strong>{sensorData?.warningLevel.message}</strong>

@@ -92,6 +92,23 @@ const Content = () => {
     usersData &&
     usersData.data &&
     usersData.data.filter((e) => e.status === "active");
+  let statusColor: string;
+  switch (sensorData?.warningLevel.color) {
+    case "RED":
+      statusColor = "bg-red-500";
+      break;
+    case "ORANGE":
+      statusColor = "bg-orange-500";
+      break;
+    case "YELLOW":
+      statusColor = "bg-yellow-300";
+      break;
+    case "GREEN":
+      statusColor = "bg-green-400";
+      break;
+    default:
+      statusColor = "bg-green-500";
+  }
   if (!user) return <MainLoader />;
   return (
     <Section>
@@ -99,7 +116,7 @@ const Content = () => {
         <div className="flex flex-col justify-between w-full lg:flex-row items-center">
           <h2 className="text-4xl manrope font-semibold">Dashboard</h2>
           <div
-            className={`text-white text-xs px-4 py-2 rounded shadow bg-${sensorData?.warningLevel.color.toLowerCase()}-500`}
+            className={`text-white text-xs px-4 py-2 rounded shadow ${statusColor}`}
           >
             Landslide Risk Level:{" "}
             <strong>{sensorData?.warningLevel.message}</strong>
