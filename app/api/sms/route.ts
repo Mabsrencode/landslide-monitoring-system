@@ -3,8 +3,9 @@ import axios from "axios";
 import environment from "@/constants/environment";
 import { adminAuth } from "@/lib/firebase/admin";
 import { db, doc } from "@/lib/firebase/config";
-import { getDoc } from "firebase/firestore";
+import { getDoc, setDoc } from "firebase/firestore";
 
+const SMS_SENT_DOC = "system/lastSmsSent";
 interface FirestoreUserData {
   contactNumber?: string;
   role?: string;
@@ -29,7 +30,19 @@ export async function POST(req: NextRequest) {
   if (!message) {
     return NextResponse.json({ error: "message is required" }, { status: 400 });
   }
+  const smsSentRef = doc(db, SMS_SENT_DOC);
+  const smsSentSnap = await getDoc(smsSentRef);
+  const smsSentData = smsSentSnap.exists() ? smsSentSnap.data() : null;
 
+  const now = new Date();
+  if (
+    smsSentData &&
+    smsSentData.message === message &&
+    now.getTime() - smsSentData.sentAt.toDate().getTime() < 5 * 60 * 1000
+  ) {
+    console.log("🔄 Duplicate SMS detected, skipping...");
+    return NextResponse.json({ status: "skipped_duplicate" });
+  }
   const listUsersResult = await adminAuth.listUsers(1000);
 
   const users: UserData[] = await Promise.all(
@@ -91,6 +104,15 @@ export async function POST(req: NextRequest) {
       {
         headers: { "Content-Type": "application/json" },
       }
+    );
+    await setDoc(
+      smsSentRef,
+      {
+        message,
+        sentAt: new Date(),
+        recipients: contactNumbers.length,
+      },
+      { merge: true }
     );
 
     return NextResponse.json(resp.data, { status: 200 });

@@ -1,6 +1,7 @@
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer, Marker, Circle, Popup } from "react-leaflet";
 import L from "leaflet";
+import Legend from "../Legend/Legend";
 
 export default function Map({
   longitude,
@@ -46,32 +47,35 @@ export default function Map({
     iconSize: [40, 40],
   });
 
-  const radius = 200;
+  const radius = 100;
 
   return (
-    <MapContainer
-      center={[latitude, longitude]}
-      zoom={13}
-      style={{ height: "100%", width: "100%" }}
-    >
-      <TileLayer
-        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-
-      <Marker position={[latitude, longitude]} icon={customIcon}>
-        <Popup>{title}</Popup>
-      </Marker>
-
-      <Circle
+    <>
+      <MapContainer
         center={[latitude, longitude]}
-        radius={radius}
-        pathOptions={{
-          color: circleColor,
-          fillColor: circleColor,
-          fillOpacity: 0.3,
-        }}
-      />
-    </MapContainer>
+        zoom={13}
+        style={{ height: "100%", width: "100%" }}
+      >
+        <TileLayer
+          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+
+        <Marker position={[latitude, longitude]} icon={customIcon}>
+          <Popup>{title}</Popup>
+        </Marker>
+
+        <Circle
+          center={[latitude, longitude]}
+          radius={radius}
+          pathOptions={{
+            color: circleColor,
+            fillColor: circleColor,
+            fillOpacity: 0.3,
+          }}
+        />
+      </MapContainer>
+      <Legend />
+    </>
   );
 }
