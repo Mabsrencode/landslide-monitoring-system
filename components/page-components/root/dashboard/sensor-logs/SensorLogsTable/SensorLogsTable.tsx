@@ -129,11 +129,10 @@ const SensorReportPDF = ({
   );
 };
 
-// ✅ Main Table Component
 const SensorLogsTable = () => {
   const [reportRange, setReportRange] = useState<
     "today" | "weekly" | "monthly"
-  >("today");
+  >("weekly");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
