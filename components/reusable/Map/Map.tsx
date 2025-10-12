@@ -2,18 +2,26 @@ import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer, Marker, Circle, Popup } from "react-leaflet";
 import L from "leaflet";
 import Legend from "../Legend/Legend";
+import { useState } from "react";
+import { useAuthStore } from "@/stores/authStore";
 
 export default function Map({
   longitude,
   latitude,
   color,
   title,
+  onTitleChange,
 }: {
   longitude: number;
   latitude: number;
   color: string;
   title: string;
+  onTitleChange?: (newTitle: string) => void;
 }) {
+  const { user } = useAuthStore();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(title);
+
   let marker: string;
   switch (color.toUpperCase()) {
     case "RED":
@@ -49,6 +57,18 @@ export default function Map({
 
   const radius = 100;
 
+  const handleSave = () => {
+    if (onTitleChange) {
+      onTitleChange(editedTitle);
+    }
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setEditedTitle(title);
+    setIsEditing(false);
+  };
+
   return (
     <>
       <MapContainer
@@ -62,7 +82,48 @@ export default function Map({
         />
 
         <Marker position={[latitude, longitude]} icon={customIcon}>
-          <Popup>{title}</Popup>
+          <Popup>
+            <div className="p-2 min-w-[200px]">
+              {isEditing ? (
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    value={editedTitle}
+                    onChange={(e) => setEditedTitle(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter location name"
+                    autoFocus
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleSave}
+                      className="flex-1 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={handleCancel}
+                      className="flex-1 px-3 py-1 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-lg text-center">{title}</h3>
+                  {user && user.role === "admin" && (
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="w-full px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
+                    >
+                      Edit Name
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </Popup>
         </Marker>
 
         <Circle

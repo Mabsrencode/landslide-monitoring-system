@@ -6,10 +6,18 @@ import { onValue, ref } from "firebase/database";
 import MapComponent from "@/components/reusable/Map";
 import React, { useEffect, useState } from "react";
 import IncidentTable from "../dashboard/incidents/IncidentTable/IncidentTable";
+import { useQuery } from "@tanstack/react-query";
 
 const Content = () => {
   const [sensorData, setSensorData] = useState<RealtimeSensorData>(null);
-
+  const { data: sensorName } = useQuery<{ name: string }>({
+    queryKey: ["sensor-name"],
+    queryFn: async () => {
+      const response = await fetch("/api/monitor/get-sensor-name");
+      const data = await response.json();
+      return data;
+    },
+  });
   useEffect(() => {
     const dataRef = ref(database, "sensors/");
     const unsubscribe = onValue(dataRef, (snapshot) => {
@@ -106,7 +114,8 @@ const Content = () => {
       </div>
       {sensorData &&
         sensorData.coordinates &&
-        sensorData.warningLevel.color && (
+        sensorData.warningLevel.color &&
+        sensorName && (
           <div className="mt-12">
             <h3 className="text-3xl manrope text-center mt-4">At risk place</h3>
             <div className="mt-2 h-[600px] w-[80%] mx-auto ">
@@ -114,7 +123,7 @@ const Content = () => {
                 latitude={sensorData.coordinates.latitude}
                 longitude={sensorData.coordinates.longitude}
                 color={sensorData.warningLevel.color}
-                title="Zone 1"
+                title={sensorName.name}
               />
             </div>
           </div>
