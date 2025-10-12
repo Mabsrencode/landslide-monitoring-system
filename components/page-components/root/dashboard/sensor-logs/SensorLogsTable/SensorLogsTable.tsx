@@ -31,7 +31,6 @@ export interface RealtimeSensorData {
   createdAt: string;
 }
 
-// ✅ PDF Styles
 const styles = StyleSheet.create({
   page: { padding: 30, fontSize: 12, fontFamily: "Helvetica" },
   title: { fontSize: 18, textAlign: "center", marginBottom: 20 },
@@ -43,7 +42,6 @@ const styles = StyleSheet.create({
   summary: { marginTop: 15, fontSize: 12 },
 });
 
-// ✅ Helper to filter logs by range
 const filterLogsByRange = (logs: RealtimeSensorData[], range: string) => {
   const now = new Date();
 
@@ -67,10 +65,8 @@ const filterLogsByRange = (logs: RealtimeSensorData[], range: string) => {
   });
 };
 
-// ✅ Type-safe keys that contain numeric values
 type NumericField = "moisture" | "rain" | "vibration";
 
-// ✅ PDF Component
 const SensorReportPDF = ({
   logs,
   range,
