@@ -42,8 +42,14 @@ const PrivateSidebar = () => {
       adminOnly: true,
     },
     {
-      link: "/dashboard/logs",
-      name: "Logs",
+      link: "/dashboard/user-logs",
+      name: "User Logs",
+      icon: <LuLogs />,
+      adminOnly: true,
+    },
+    {
+      link: "/dashboard/sensor-logs",
+      name: "Sensor History Logs",
       icon: <LuLogs />,
       adminOnly: true,
     },

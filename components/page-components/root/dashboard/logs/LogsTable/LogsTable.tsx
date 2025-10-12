@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     height: 10,
     backgroundColor: "#4F46E5",
     borderRadius: 3,
-    marginTop: 4
+    marginTop: 4,
   },
   logItem: {
     borderBottom: "1 solid #eee",
@@ -115,10 +115,7 @@ const EnhancedLogsReportPDF = ({
               System Logs Summary Report
             </Text>
           </View>
-          <Image
-            src="/logo.png"
-            style={styles.logo}
-          />
+          <Image src="/logo.png" style={styles.logo} />
         </View>
 
         <View style={styles.titleSection}>
@@ -256,7 +253,6 @@ const LogsTable = () => {
         return logs;
     }
   };
-
 
   const handleExport = async () => {
     if (!logsData) return;
@@ -398,7 +394,9 @@ const LogsTable = () => {
               )}
               <button
                 className="px-3 py-1 rounded bg-gray-200 disabled:opacity-50 cursor-pointer text-sm"
-                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(p + 1, totalPages))
+                }
                 disabled={currentPage === totalPages}
               >
                 Next

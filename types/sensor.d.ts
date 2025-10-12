@@ -24,6 +24,7 @@ interface ChartDataPoint {
 }
 
 type RealtimeSensorData = {
+  uid: string;
   coordinates: {
     latitude: number;
     longitude: number;
@@ -44,4 +45,5 @@ type RealtimeSensorData = {
     color: string;
     message: string;
   };
+  createdAt?: string;
 } | null;
