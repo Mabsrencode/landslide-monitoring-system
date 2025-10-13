@@ -2,7 +2,9 @@ import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer, Marker, Circle, Popup } from "react-leaflet";
 import L from "leaflet";
 import Legend from "../Legend/Legend";
-import { useState } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
+import { ref, update } from "firebase/database";
+import { database } from "@/lib/firebase/firebase-client";
 import { useAuthStore } from "@/stores/authStore";
 
 export default function Map({
@@ -21,25 +23,36 @@ export default function Map({
   const { user } = useAuthStore();
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title);
+  const [markerPos, setMarkerPos] = useState<[number, number]>([
+    latitude,
+    longitude,
+  ]);
+  const [address, setAddress] = useState<string>("Fetching address...");
 
-  let marker: string;
-  switch (color.toUpperCase()) {
-    case "RED":
-      marker = "/assets/markers/red-marker.png";
-      break;
-    case "ORANGE":
-      marker = "/assets/markers/orange-marker.png";
-      break;
-    case "YELLOW":
-      marker = "/assets/markers/yellow-marker.png";
-      break;
-    case "GREEN":
-      marker = "/assets/markers/green-marker.png";
-      break;
-    default:
-      marker = "/assets/markers/green-marker.png";
-      break;
-  }
+  const markerRef = useRef<L.Marker | null>(null);
+
+  const markerIcon = useMemo(() => {
+    let markerUrl: string;
+    switch (color.toUpperCase()) {
+      case "RED":
+        markerUrl = "/assets/markers/red-marker.png";
+        break;
+      case "ORANGE":
+        markerUrl = "/assets/markers/orange-marker.png";
+        break;
+      case "YELLOW":
+        markerUrl = "/assets/markers/yellow-marker.png";
+        break;
+      case "GREEN":
+      default:
+        markerUrl = "/assets/markers/green-marker.png";
+    }
+    return new L.Icon({
+      iconUrl: markerUrl,
+      iconSize: [40, 40],
+      iconAnchor: [20, 40],
+    });
+  }, [color]);
 
   const colorMap: Record<string, string> = {
     RED: "#FF0000",
@@ -50,17 +63,45 @@ export default function Map({
 
   const circleColor = colorMap[color.toUpperCase()] || "#00FF00";
 
-  const customIcon = new L.Icon({
-    iconUrl: marker,
-    iconSize: [40, 40],
-  });
+  const fetchAddress = async (lat: number, lng: number) => {
+    try {
+      const apiKey = process.env.NEXT_PUBLIC_OPENCAGE_API_KEY;
+      const response = await fetch(
+        `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${apiKey}`
+      );
+      const data = await response.json();
+      if (data.results && data.results[0]) {
+        setAddress(data.results[0].formatted);
+      } else {
+        setAddress("Address not found");
+      }
+    } catch (error) {
+      console.error("Error fetching address:", error);
+      setAddress("Failed to fetch address");
+    }
+  };
 
-  const radius = 100;
+  const handleDragEnd = async () => {
+    const marker = markerRef.current;
+    if (marker) {
+      const position = marker.getLatLng();
+      const lat = position.lat.toFixed(6);
+      const lng = position.lng.toFixed(6);
+
+      setMarkerPos([Number(lat), Number(lng)]);
+
+      const coordsRef = ref(database, "sensors/coordinates");
+      await update(coordsRef, {
+        latitude: lat,
+        longitude: lng,
+      });
+
+      fetchAddress(Number(lat), Number(lng));
+    }
+  };
 
   const handleSave = () => {
-    if (onTitleChange) {
-      onTitleChange(editedTitle);
-    }
+    if (onTitleChange) onTitleChange(editedTitle);
     setIsEditing(false);
   };
 
@@ -69,10 +110,14 @@ export default function Map({
     setIsEditing(false);
   };
 
+  useEffect(() => {
+    fetchAddress(latitude, longitude);
+  }, [fetchAddress, latitude, longitude]);
+
   return (
     <>
       <MapContainer
-        center={[latitude, longitude]}
+        center={markerPos}
         zoom={13}
         style={{ height: "100%", width: "100%" }}
       >
@@ -81,9 +126,15 @@ export default function Map({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        <Marker position={[latitude, longitude]} icon={customIcon}>
+        <Marker
+          position={markerPos}
+          icon={markerIcon}
+          draggable={user?.role === "admin"}
+          eventHandlers={{ dragend: handleDragEnd }}
+          ref={markerRef}
+        >
           <Popup>
-            <div className="p-2 min-w-[200px]">
+            <div className="p-2 min-w-[220px]">
               {isEditing ? (
                 <div className="space-y-2">
                   <input
@@ -112,13 +163,32 @@ export default function Map({
               ) : (
                 <div className="space-y-2">
                   <h3 className="font-semibold text-lg text-center">{title}</h3>
+                  <div>
+                    <div>
+                      <span className="font-semibold">Lat:</span> {markerPos[0]}
+                    </div>
+                    <div>
+                      <span className="font-semibold">Long:</span>{" "}
+                      {markerPos[1]}
+                    </div>
+                    <div className="break-words">
+                      <span className="font-semibold">Address:</span>{" "}
+                      {address || "Fetching..."}
+                    </div>
+                  </div>
+
                   {user && user.role === "admin" && (
-                    <button
-                      onClick={() => setIsEditing(true)}
-                      className="w-full px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
-                    >
-                      Edit Name
-                    </button>
+                    <>
+                      <button
+                        onClick={() => setIsEditing(true)}
+                        className="w-full px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
+                      >
+                        Edit Name
+                      </button>
+                      <p className="text-sm text-gray-600 text-center mt-2">
+                        Drag marker to update coordinates
+                      </p>
+                    </>
                   )}
                 </div>
               )}
@@ -127,8 +197,8 @@ export default function Map({
         </Marker>
 
         <Circle
-          center={[latitude, longitude]}
-          radius={radius}
+          center={markerPos}
+          radius={100}
           pathOptions={{
             color: circleColor,
             fillColor: circleColor,
