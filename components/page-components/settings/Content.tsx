@@ -97,23 +97,6 @@ const Content = () => {
           </div>
           <div className="border border-black/10 p-2 rounded bg-gray-200">
             <h2 className="text-xl md:text-2xl manrope font-semibold">
-              Notifications
-            </h2>
-            <p className="text-gray-700 text-sm">
-              Stay informed with real-time alerts on ground movement, rainfall
-              thresholds, and early warning signs to help prevent disasters.
-            </p>
-            <span className="mt-6 flex flex-wrap gap-4">
-              <Link
-                href={"/settings/notifications"}
-                className="button w-full text-center text-white text-nowrap text-sm md:text-base"
-              >
-                Manage Notification
-              </Link>
-            </span>
-          </div>
-          <div className="border border-black/10 p-2 rounded bg-gray-200">
-            <h2 className="text-xl md:text-2xl manrope font-semibold">
               Account Settings
             </h2>
             <span className="mt-6 flex flex-wrap gap-4">
