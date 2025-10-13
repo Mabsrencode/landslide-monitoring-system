@@ -67,7 +67,7 @@ const Content = () => {
 
       <div className="p-4 border border-black/20 rounded mt-6">
         <h3 className="font-semibold text-2xl manrope text-center">
-          Current Sensor Data
+          Current Readings
         </h3>
 
         {latestTimestamp && (
