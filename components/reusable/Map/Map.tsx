@@ -1,11 +1,26 @@
 import "leaflet/dist/leaflet.css";
-import { MapContainer, TileLayer, Marker, Circle, Popup } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Circle,
+  Popup,
+  useMap,
+} from "react-leaflet";
 import L from "leaflet";
 import Legend from "../Legend/Legend";
 import { useState, useRef, useMemo, useEffect } from "react";
 import { ref, update } from "firebase/database";
 import { database } from "@/lib/firebase/firebase-client";
 import { useAuthStore } from "@/stores/authStore";
+
+function RecenterMap({ lat, lng }: { lat: number; lng: number }) {
+  const map = useMap();
+  useEffect(() => {
+    map.setView([lat, lng], map.getZoom());
+  }, [lat, lng, map]);
+  return null;
+}
 
 export default function Map({
   longitude,
@@ -28,6 +43,8 @@ export default function Map({
     longitude,
   ]);
   const [address, setAddress] = useState<string>("Fetching address...");
+  const [inputLat, setInputLat] = useState(latitude);
+  const [inputLng, setInputLng] = useState(longitude);
 
   const markerRef = useRef<L.Marker | null>(null);
 
@@ -85,18 +102,16 @@ export default function Map({
     const marker = markerRef.current;
     if (marker) {
       const position = marker.getLatLng();
-      const lat = position.lat.toFixed(6);
-      const lng = position.lng.toFixed(6);
-
-      setMarkerPos([Number(lat), Number(lng)]);
+      const lat = parseFloat(position.lat.toFixed(6));
+      const lng = parseFloat(position.lng.toFixed(6));
+      setMarkerPos([lat, lng]);
+      setInputLat(lat);
+      setInputLng(lng);
 
       const coordsRef = ref(database, "sensors/coordinates");
-      await update(coordsRef, {
-        latitude: lat,
-        longitude: lng,
-      });
+      await update(coordsRef, { latitude: lat, longitude: lng });
 
-      fetchAddress(Number(lat), Number(lng));
+      fetchAddress(lat, lng);
     }
   };
 
@@ -110,17 +125,68 @@ export default function Map({
     setIsEditing(false);
   };
 
+  const handleGoToCoordinates = async () => {
+    const lat = Number(inputLat);
+    const lng = Number(inputLng);
+    if (isNaN(lat) || isNaN(lng)) return alert("Invalid coordinates");
+    setMarkerPos([lat, lng]);
+    fetchAddress(lat, lng);
+
+    const coordsRef = ref(database, "sensors/coordinates");
+    await update(coordsRef, { latitude: lat, longitude: lng });
+  };
+
   useEffect(() => {
     fetchAddress(latitude, longitude);
-  }, [fetchAddress, latitude, longitude]);
+  }, [latitude, longitude]);
 
   return (
     <>
+      {user?.role === "admin" && (
+        <div className="grid gap-2 mb-3 p-2 bg-primary/5 rounded-lg border border-accent/20">
+          <div className="flex items-center gap-2">
+            <div className="grid gap-2">
+              <label htmlFor="lat" className="font-semibold manrope text-sm">
+                Latitude
+              </label>
+              <input
+                type="number"
+                step="0.000001"
+                value={inputLat}
+                onChange={(e) => setInputLat(Number(e.target.value))}
+                className="border border-gray-300 rounded-md px-2 py-1 w-40 focus:outline-none "
+                placeholder="Latitude"
+              />
+            </div>
+            <div className="grid gap-2">
+              <label htmlFor="long" className="font-semibold manrope text-sm">
+                Longitude
+              </label>
+              <input
+                type="number"
+                step="0.000001"
+                value={inputLng}
+                onChange={(e) => setInputLng(Number(e.target.value))}
+                className="border border-gray-300 rounded-md px-2 py-1 w-40 focus:outline-none "
+                placeholder="Longitude"
+              />
+            </div>
+          </div>
+          <button
+            onClick={handleGoToCoordinates}
+            className="px-4 py-1 bg-primary max-w-min text-white rounded-md hover:bg-secondary cursor-pointer transition-colors"
+          >
+            Save
+          </button>
+        </div>
+      )}
+
       <MapContainer
         center={markerPos}
         zoom={13}
         style={{ height: "100%", width: "100%" }}
       >
+        <RecenterMap lat={markerPos[0]} lng={markerPos[1]} />
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -141,7 +207,7 @@ export default function Map({
                     type="text"
                     value={editedTitle}
                     onChange={(e) => setEditedTitle(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none "
                     placeholder="Enter location name"
                     autoFocus
                   />
@@ -186,7 +252,7 @@ export default function Map({
                         Edit Name
                       </button>
                       <p className="text-sm text-gray-600 text-center mt-2">
-                        Drag marker to update coordinates
+                        Drag marker or input coordinates
                       </p>
                     </>
                   )}
@@ -206,6 +272,7 @@ export default function Map({
           }}
         />
       </MapContainer>
+
       <Legend />
     </>
   );
