@@ -10,10 +10,6 @@ const otherLinks = [
     title: "Password & Security",
     link: "/settings/account-details/security",
   },
-  {
-    title: "Notifications",
-    link: "/settings/notifications",
-  },
 ];
 const OthersLink = () => {
   return (
