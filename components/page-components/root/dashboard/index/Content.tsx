@@ -145,7 +145,7 @@ const Content = () => {
                 ) : (
                   <div className="text-4xl my-4">{incidentData?.length}</div>
                 )}
-                <h3 className="text-2xl manrope">Incidents</h3>
+                <h3 className="text-2xl manrope">Alerts</h3>
               </div>
             </li>
             <li className="p-4 rounded bg-secondary text-white w-[300px] min-h-fit flex items-center justify-center">
@@ -267,7 +267,7 @@ const Content = () => {
       )}
       {!isAdmin && (
         <div className="mt-12">
-          <h3 className="manrope text-2xl font-semibold">Recent Incidents</h3>
+          <h3 className="manrope text-2xl font-semibold">Recent Alerts</h3>
           <IncidentTable pagination={false} />
         </div>
       )}

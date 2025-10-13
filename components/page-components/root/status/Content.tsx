@@ -109,7 +109,7 @@ const Content = () => {
         </ul>
       </div>
       <div className="mt-12">
-        <h3 className="manrope text-2xl font-semibold">Recent Incidents</h3>
+        <h3 className="manrope text-2xl font-semibold">Recent Alerts</h3>
         <IncidentTable pagination={false} publicComponent />
       </div>
       {sensorData &&
