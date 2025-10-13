@@ -217,7 +217,7 @@ const SensorLogsTable = () => {
                   );
                   setCurrentPage(1);
                 }}
-                className="border border-accent rounded px-2 py-1 text-sm"
+                className="px-3 py-2 border rounded-md text-sm border-accent"
               >
                 <option value="today">Today</option>
                 <option value="weekly">Weekly</option>

@@ -197,7 +197,7 @@ const EnhancedLogsReportPDF = ({
   );
 };
 
-const LogsTable = () => {
+const UserLogsTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [period, setPeriod] = useState("daily");
@@ -417,4 +417,4 @@ const LogsTable = () => {
   );
 };
 
-export default LogsTable;
+export default UserLogsTable;
