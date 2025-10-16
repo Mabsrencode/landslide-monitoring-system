@@ -92,7 +92,7 @@ async function renewLock(
 export function startSensorCron() {
   console.log("🌋 Sensor monitoring cron initialized.");
 
-  cron.schedule("0 */30 * * * *", async () => {
+  cron.schedule("*/10 * * * * *", async () => {
     const lockId = uuidv4();
     let lockAcquired = false;
 
