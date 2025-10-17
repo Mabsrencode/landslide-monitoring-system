@@ -5,6 +5,7 @@ export async function POST(request: Request) {
   try {
     const { token } = await request.json();
     const decodedToken = await adminAuth.verifyIdToken(token);
+    console.log(decodedToken);
     return NextResponse.json({ valid: true, uid: decodedToken.uid });
   } catch (error) {
     return NextResponse.json(
