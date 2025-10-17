@@ -95,6 +95,16 @@ export function startSensorCron() {
   cron.schedule("*/10 * * * * *", async () => {
     const lockId = uuidv4();
     let lockAcquired = false;
+    let zoneName = "Unknown Area";
+    try {
+      const zoneRef = doc(db, "sensor", "pBrGC519Ne5tAzyCQ2Ks");
+      const zoneSnap = await getDoc(zoneRef);
+      if (zoneSnap.exists()) {
+        zoneName = zoneSnap.data().name || zoneName;
+      }
+    } catch (err) {
+      console.error("⚠️ Failed to fetch zone name:", err);
+    }
 
     try {
       lockAcquired = await acquireLock(lockId, 120000);
@@ -112,6 +122,15 @@ export function startSensorCron() {
         console.log("No sensor data found.");
         return;
       }
+
+      if (latestData.enable === false) {
+        console.log("🚫 Monitoring disabled — skipping this cycle.");
+        return;
+      }
+      await setDoc(doc(db, "sensorHistory", uuidv4()), {
+        ...latestData,
+        createdAt: nowISOString(),
+      });
 
       const color = latestData.warningLevel?.color?.toUpperCase();
       if (!color) return;
@@ -189,8 +208,8 @@ export function startSensorCron() {
           .replace(" ", "");
 
         const alertMessages = {
-          ORANGE: `Bantay Landslide (${formattedDate}): Orange Warning Alert - High risk of landslide due to heavy rainfall and unstable soil. Affected Area: Zone 1 Be prepared for possible evacuation and avoid landslide-prone areas.`,
-          RED: `Bantay Landslide (${formattedDate}): Red Warning Alert - Very high risk of landslide!, Affected Area: Zone 1, Immediate evacuation required. Do not stay in landslide-prone areas.`,
+          ORANGE: `Bantay Landslide (${formattedDate}): Orange Warning Alert - High risk of landslide due to heavy rainfall and unstable soil. Affected Area: ${zoneName} Be prepared for possible evacuation and avoid landslide-prone areas.`,
+          RED: `Bantay Landslide (${formattedDate}): Red Warning Alert - Very high risk of landslide!, Affected Area: ${zoneName}, Immediate evacuation required. Do not stay in landslide-prone areas.`,
         };
 
         await setDoc(doc(db, "incidents", uuidv4()), {
@@ -216,11 +235,6 @@ export function startSensorCron() {
           `ℹ️ ${color} alert - no change from previous state (${lastAlertColor})`
         );
       }
-
-      await setDoc(doc(db, "sensorHistory", uuidv4()), {
-        ...latestData,
-        createdAt: nowISOString(),
-      });
     } catch (error) {
       console.error("❌ Error in landslide monitoring cron:", error);
     } finally {

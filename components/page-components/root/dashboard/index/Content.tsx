@@ -15,7 +15,7 @@ import {
   BreakPointHooks,
   breakpointsTailwind,
 } from "@react-hooks-library/core";
-import { onValue, ref } from "firebase/database";
+import { onValue, ref, update } from "firebase/database";
 import { database } from "@/lib/firebase/firebase-client";
 import Section from "@/components/reusable/Section/Section";
 import { useAuthStore } from "@/stores/authStore";
@@ -29,6 +29,7 @@ const Content = () => {
   const isAdmin = user?.role === "admin";
 
   const [sensorData, setSensorData] = useState<RealtimeSensorData>(null);
+  const [isToggling, setIsToggling] = useState(false);
   useEffect(() => {
     const dataRef = ref(database, "sensors/");
 
@@ -39,6 +40,23 @@ const Content = () => {
 
     return () => unsubscribe();
   }, []);
+
+  const handleToggleEnable = async () => {
+    if (!sensorData) return;
+    try {
+      setIsToggling(true);
+      const dataRef = ref(database, "sensors/");
+      await update(dataRef, { enable: !sensorData.enable });
+      console.log(
+        `Sensor monitoring ${sensorData.enable ? "disabled" : "enabled"}.`
+      );
+    } catch (error) {
+      console.error("Error toggling sensor enable state:", error);
+    } finally {
+      setIsToggling(false);
+    }
+  };
+
   const { useGreater, useBetween, useSmaller } =
     BreakPointHooks(breakpointsTailwind);
   const greater = useGreater("md");
@@ -115,11 +133,26 @@ const Content = () => {
       <div className="flex items-center gap-4 w-full justify-between">
         <div className="flex flex-col justify-between w-full lg:flex-row items-center">
           <h2 className="text-4xl manrope font-semibold">Dashboard</h2>
-          <div
-            className={`text-white text-xs px-4 py-2 rounded shadow ${statusColor}`}
-          >
-            Landslide Risk Level:{" "}
-            <strong>{sensorData?.warningLevel.message}</strong>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleToggleEnable}
+              disabled={isToggling}
+              className={`${
+                sensorData?.enable ? "bg-red-500" : "bg-green-500"
+              } px-4 py-1 text-sm rounded text-white manrope font-semibold disabled:opacity-50`}
+            >
+              {isToggling
+                ? "Updating..."
+                : sensorData?.enable
+                ? "Disable"
+                : "Enable"}
+            </button>
+            <div
+              className={`text-white text-xs px-4 py-2 rounded shadow ${statusColor}`}
+            >
+              Landslide Risk Level:{" "}
+              <strong>{sensorData?.warningLevel.message}</strong>
+            </div>
           </div>
         </div>
       </div>
