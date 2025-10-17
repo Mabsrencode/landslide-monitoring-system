@@ -135,7 +135,7 @@ class AuthService {
       );
       response.cookies.set("bantay-access-tk", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: process.env.NODE_ENV === "production" ? true : false,
         sameSite: "strict",
         maxAge: 60 * 60,
         path: "/",
