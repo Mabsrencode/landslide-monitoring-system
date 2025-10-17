@@ -144,6 +144,7 @@ const SensorLogsTable = () => {
     queryKey: ["sensor-history"],
     queryFn: async () => UseGetResponse("/api/monitor/sensor-history"),
   });
+  console.log(sensorHistoryLogs);
 
   const filteredLogs = useMemo(() => {
     if (!sensorHistoryLogs) return [];
@@ -276,7 +277,7 @@ const SensorLogsTable = () => {
                       </td>
                       <td className="px-6 py-4 capitalize">
                         <span
-                          className={`px-2 py-1 rounded text-white bg-${sensor.warningLevel.color}-500`}
+                          className={`px-2 py-1 rounded text-black bg-${sensor.warningLevel.color}-500`}
                         >
                           {sensor.warningLevel.color}
                         </span>
