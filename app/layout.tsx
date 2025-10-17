@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { startSensorCron } from "@/lib/cron/sensorCron";
-
-startSensorCron();
 
 export const metadata: Metadata = {
   title: "Bantay Landslide",
