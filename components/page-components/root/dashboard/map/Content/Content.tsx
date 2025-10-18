@@ -6,6 +6,7 @@ import { onValue, ref } from "firebase/database";
 import MapComponent from "@/components/reusable/Map";
 import { useAuthStore } from "@/stores/authStore";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const Content = () => {
   const { user } = useAuthStore();
@@ -30,6 +31,7 @@ const Content = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sensor-name"] });
+      toast.success(`Successfully saving sensor name.`);
     },
   });
 

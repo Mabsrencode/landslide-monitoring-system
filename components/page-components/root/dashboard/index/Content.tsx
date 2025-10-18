@@ -23,6 +23,7 @@ import IncidentTable from "../incidents/IncidentTable/IncidentTable";
 import { useQuery } from "@tanstack/react-query";
 import { UseGetResponse } from "@/hooks/useGetResponse";
 import MainLoader from "@/components/reusable/MainLoader/MainLoader";
+import toast from "react-hot-toast";
 
 const Content = () => {
   const { user } = useAuthStore();
@@ -49,7 +50,7 @@ const Content = () => {
       setIsToggling(true);
       const dataRef = ref(database, "sensors/");
       await update(dataRef, { enable: !sensorData.enable });
-      console.log(
+      toast.success(
         `Sensor monitoring ${sensorData.enable ? "disabled" : "enabled"}.`
       );
     } catch (error) {

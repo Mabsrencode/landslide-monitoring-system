@@ -13,6 +13,7 @@ import { useState, useRef, useMemo, useEffect } from "react";
 import { ref, update } from "firebase/database";
 import { database } from "@/lib/firebase/firebase-client";
 import { useAuthStore } from "@/stores/authStore";
+import toast from "react-hot-toast";
 
 function RecenterMap({ lat, lng }: { lat: number; lng: number }) {
   const map = useMap();
@@ -134,6 +135,7 @@ export default function Map({
 
     const coordsRef = ref(database, "sensors/coordinates");
     await update(coordsRef, { latitude: lat, longitude: lng });
+    toast.success(`Successfully saving coordinates.`);
   };
 
   useEffect(() => {

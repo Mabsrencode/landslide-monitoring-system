@@ -6,6 +6,7 @@ import { FaSearch, FaEdit, FaTrash, FaSave, FaTimes } from "react-icons/fa";
 import GlobalSpinningLoader from "@/components/reusable/SpinnerLoader/GlobalSpinningLoader";
 import { UseGetResponse } from "@/hooks/useGetResponse";
 import { formatDateTime } from "@/utils/formatDateTime";
+import toast from "react-hot-toast";
 
 type UserRole = "user" | "admin";
 type UserStatus = "active" | "inactive" | "pending_verification";
@@ -63,6 +64,7 @@ const UsersTable: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       setEditingUser(null);
+      toast.success(`Successfully update user.`);
     },
   });
 
@@ -74,7 +76,10 @@ const UsersTable: React.FC = () => {
       if (!res.ok) throw new Error("Failed to delete user");
       return res.json();
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["users"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      toast.success(`Successfully deleted user.`);
+    },
   });
 
   const filteredUsers = useMemo(() => {
