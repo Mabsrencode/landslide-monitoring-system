@@ -130,9 +130,9 @@ const SensorReportPDF = ({
 };
 
 const SensorLogsTable = () => {
-  const [reportRange, setReportRange] = useState<
-    "today" | "weekly" | "monthly"
-  >("weekly");
+  const [reportRange, setReportRange] = useState<"weekly" | "monthly">(
+    "weekly"
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
@@ -213,14 +213,11 @@ const SensorLogsTable = () => {
               <select
                 value={reportRange}
                 onChange={(e) => {
-                  setReportRange(
-                    e.target.value as "today" | "weekly" | "monthly"
-                  );
+                  setReportRange(e.target.value as "weekly" | "monthly");
                   setCurrentPage(1);
                 }}
                 className="px-3 py-2 border rounded-md text-sm border-accent"
               >
-                <option value="today">Today</option>
                 <option value="weekly">Weekly</option>
                 <option value="monthly">Monthly</option>
               </select>
