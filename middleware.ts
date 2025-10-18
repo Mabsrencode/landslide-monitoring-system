@@ -23,28 +23,28 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", request.nextUrl));
   }
 
-  if (!isPublicRoute && token) {
-    try {
-      const verificationResponse = await fetch(new URL("/api", request.url), {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token }),
-      });
-      const { valid } = await verificationResponse.json();
+  // if (!isPublicRoute && token) {
+  //   try {
+  //     const verificationResponse = await fetch(new URL("/api", request.url), {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ token }),
+  //     });
+  //     const { valid } = await verificationResponse.json();
 
-      if (!valid) {
-        throw new Error("Invalid token");
-      }
-    } catch (error) {
-      const response = NextResponse.redirect(
-        new URL("/auth/login", request.url)
-      );
-      response.cookies.delete("bantay-access-tk");
-      return response;
-    }
-  }
+  //     if (!valid) {
+  //       throw new Error("Invalid token");
+  //     }
+  //   } catch (error) {
+  //     const response = NextResponse.redirect(
+  //       new URL("/auth/login", request.url)
+  //     );
+  //     response.cookies.delete("bantay-access-tk");
+  //     return response;
+  //   }
+  // }
 
   return NextResponse.next();
 }
