@@ -76,7 +76,7 @@ const Content = () => {
           </p>
         )}
 
-        <ul className="mt-4 space-y-1 flex flex-col md:flex-row gap-2 w-full justify-center text-sm text-center">
+        <ul className="mt-4 space-y-1 flex items-center flex-col md:flex-row gap-2 w-full justify-center text-sm text-center">
           <li className="p-4 rounded bg-secondary text-white w-[300px] h-full">
             <div className="text-7xl">💧</div>
             <div className="text-4xl my-4">
@@ -112,22 +112,26 @@ const Content = () => {
         <h3 className="manrope text-2xl font-semibold">Recent Alerts</h3>
         <IncidentTable pagination={false} publicComponent />
       </div>
-      {sensorData &&
-        sensorData.coordinates &&
-        sensorData.warningLevel.color &&
-        sensorName && (
-          <div className="mt-12">
-            <h3 className="text-3xl manrope text-center mt-4">At risk place</h3>
-            <div className="mt-2 h-[600px] w-[80%] mx-auto ">
-              <MapComponent
-                latitude={sensorData.coordinates.latitude}
-                longitude={sensorData.coordinates.longitude}
-                color={sensorData.warningLevel.color}
-                title={sensorName.name}
-              />
+      <div>
+        {sensorData &&
+          sensorData.coordinates &&
+          sensorData.warningLevel.color &&
+          sensorName && (
+            <div className="mt-12">
+              <h3 className="text-3xl manrope text-center mt-4">
+                At risk place
+              </h3>
+              <div className="mt-2 h-[300px] lg:h-[600px] lg:w-[80%] mx-auto ">
+                <MapComponent
+                  latitude={sensorData.coordinates.latitude}
+                  longitude={sensorData.coordinates.longitude}
+                  color={sensorData.warningLevel.color}
+                  title={sensorName.name}
+                />
+              </div>
             </div>
-          </div>
-        )}
+          )}
+      </div>
     </Section>
   );
 };
