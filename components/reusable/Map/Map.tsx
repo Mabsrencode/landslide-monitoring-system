@@ -173,13 +173,13 @@ export default function Map({
                 placeholder="Longitude"
               />
             </div>
+            <button
+              onClick={handleGoToCoordinates}
+              className="px-4 py-1 bg-primary self-end max-w-min text-white rounded-md hover:bg-secondary cursor-pointer transition-colors"
+            >
+              Save
+            </button>
           </div>
-          <button
-            onClick={handleGoToCoordinates}
-            className="px-4 py-1 bg-primary max-w-min text-white rounded-md hover:bg-secondary cursor-pointer transition-colors"
-          >
-            Save
-          </button>
         </div>
       )}
 
