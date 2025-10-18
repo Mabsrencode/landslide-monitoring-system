@@ -30,6 +30,9 @@ const Content = () => {
   const isAdmin = user?.role === "admin";
 
   const [sensorData, setSensorData] = useState<RealtimeSensorData>(null);
+  const [sensorHistoryData, setSensorHistoryData] = useState<
+    SensorHistoryItem[]
+  >([]);
   const [isToggling, setIsToggling] = useState(false);
   const [filterRange, setFilterRange] = useState<"today" | "15days" | "30days">(
     "today"
@@ -40,6 +43,15 @@ const Content = () => {
     const unsubscribe = onValue(dataRef, (snapshot) => {
       const data = snapshot.val();
       setSensorData(data);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const dataRef = ref(database, "sensorsHistory/");
+    const unsubscribe = onValue(dataRef, (snapshot) => {
+      const data = snapshot.val();
+      setSensorHistoryData(data);
     });
     return () => unsubscribe();
   }, []);
@@ -97,17 +109,19 @@ const Content = () => {
       enabled: !!isAdmin,
     });
 
-  const { data: sensorHistoryData } = useQuery<SensorHistoryItem[]>({
-    queryKey: ["sensor-history"],
-    queryFn: async () => UseGetResponse("/api/monitor/sensor-history"),
-    staleTime: 5 * 60 * 1000,
-  });
-
   const chartData: ChartDataPoint[] = useMemo(() => {
     if (!sensorHistoryData) return [];
 
+    const historyArray = Object.entries(sensorHistoryData).map(
+      ([id, item]) => ({
+        id,
+        ...item,
+      })
+    );
+
     const now = new Date();
-    const filtered = sensorHistoryData.filter((item) => {
+
+    const filtered = historyArray.filter((item) => {
       if (!item.createdAt) return false;
       const createdAt = new Date(item.createdAt);
 
@@ -117,6 +131,7 @@ const Content = () => {
 
       const diffDays =
         (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24);
+
       if (filterRange === "15days") return diffDays <= 15;
       if (filterRange === "30days") return diffDays <= 30;
 
@@ -129,7 +144,11 @@ const Content = () => {
     );
 
     return filtered.map((item) => ({
-      time: new Date(item.createdAt).toLocaleString(),
+      time: new Date(item.createdAt).toLocaleTimeString("en-PH", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      }),
       moisture: item.moisture?.value ?? 0,
       rain: item.rain?.value ?? 0,
       vibration: item.vibration?.value ?? 0,
@@ -249,7 +268,7 @@ const Content = () => {
               </select>
             </div>
 
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center mt-8">
               <div className="grid xl:grid-cols-2 gap-4">
                 <LineChart
                   width={chartWidth}
@@ -266,7 +285,7 @@ const Content = () => {
                     type="monotone"
                     dataKey="moisture"
                     stroke="#8884d8"
-                    name="Vibration"
+                    name="Soil Moisture"
                   />
                 </LineChart>
 
@@ -285,7 +304,7 @@ const Content = () => {
                     type="monotone"
                     dataKey="vibration"
                     stroke="#82ca9d"
-                    name="Soil Moisture"
+                    name="Vibration"
                   />
                 </LineChart>
 
