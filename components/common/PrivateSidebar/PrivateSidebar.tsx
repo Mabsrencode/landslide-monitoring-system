@@ -81,6 +81,7 @@ const PrivateSidebar = () => {
       setUser(null);
       toast.success("Logged out successfully");
       router.push("/auth/login");
+      localStorage.clear();
     },
     onError: (error) => {
       toast.error(`Logout error: ${(error as Error).message}`);
