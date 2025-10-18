@@ -266,7 +266,7 @@ const Content = () => {
                     type="monotone"
                     dataKey="moisture"
                     stroke="#8884d8"
-                    name="Soil Moisture"
+                    name="Vibration"
                   />
                 </LineChart>
 
@@ -285,7 +285,7 @@ const Content = () => {
                     type="monotone"
                     dataKey="vibration"
                     stroke="#82ca9d"
-                    name="Vibration"
+                    name="Soil Moisture"
                   />
                 </LineChart>
 
