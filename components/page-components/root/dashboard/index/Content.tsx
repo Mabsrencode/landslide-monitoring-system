@@ -48,7 +48,7 @@ const Content = () => {
   }, []);
 
   useEffect(() => {
-    const dataRef = ref(database, "sensorsHistory/");
+    const dataRef = ref(database, "sensorHistory/");
     const unsubscribe = onValue(dataRef, (snapshot) => {
       const data = snapshot.val();
       setSensorHistoryData(data);

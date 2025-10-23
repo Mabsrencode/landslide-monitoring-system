@@ -144,7 +144,7 @@ const SensorLogsTable: React.FC = () => {
     useState<Error | null>(null);
 
   useEffect(() => {
-    const dataRef = ref(database, "sensorsHistory/");
+    const dataRef = ref(database, "sensorHistory/");
     const unsubscribe = onValue(
       dataRef,
       (snapshot: DataSnapshot) => {
