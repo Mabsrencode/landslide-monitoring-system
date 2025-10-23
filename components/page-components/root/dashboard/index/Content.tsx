@@ -197,8 +197,8 @@ const Content = () => {
                 {isToggling
                   ? "Updating..."
                   : sensorData?.enable
-                  ? "Disable"
-                  : "Enable"}
+                  ? "Disable SMS"
+                  : "Enable SMS"}
               </button>
             )}
             <div
