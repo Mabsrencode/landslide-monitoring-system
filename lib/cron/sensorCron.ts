@@ -127,10 +127,10 @@ export function startSensorCron() {
         console.log("🚫 Monitoring disabled — skipping this cycle.");
         return;
       }
-      await setDoc(doc(db, "sensorHistory", uuidv4()), {
-        ...latestData,
-        createdAt: nowISOString(),
-      });
+      // await setDoc(doc(db, "sensorHistory", uuidv4()), {
+      //   ...latestData,
+      //   createdAt: nowISOString(),
+      // });
 
       const color = latestData.warningLevel?.color?.toUpperCase();
       if (!color) return;
