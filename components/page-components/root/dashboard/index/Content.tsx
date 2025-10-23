@@ -186,19 +186,21 @@ const Content = () => {
         <div className="flex flex-col justify-between w-full lg:flex-row items-center">
           <h2 className="text-4xl manrope font-semibold">Dashboard</h2>
           <div className="flex items-center gap-2">
-            <button
-              onClick={handleToggleEnable}
-              disabled={isToggling}
-              className={`${
-                sensorData?.enable ? "bg-red-500" : "bg-green-500"
-              } px-4 py-1 text-sm rounded text-white manrope font-semibold disabled:opacity-50`}
-            >
-              {isToggling
-                ? "Updating..."
-                : sensorData?.enable
-                ? "Disable"
-                : "Enable"}
-            </button>
+            {user.role === "admin" && (
+              <button
+                onClick={handleToggleEnable}
+                disabled={isToggling}
+                className={`${
+                  sensorData?.enable ? "bg-red-500" : "bg-green-500"
+                } px-4 py-1 text-sm rounded text-white manrope font-semibold disabled:opacity-50`}
+              >
+                {isToggling
+                  ? "Updating..."
+                  : sensorData?.enable
+                  ? "Disable"
+                  : "Enable"}
+              </button>
+            )}
             <div
               className={`text-white text-xs px-4 py-2 rounded shadow ${statusColor}`}
             >
