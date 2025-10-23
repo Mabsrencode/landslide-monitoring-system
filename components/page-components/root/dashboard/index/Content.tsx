@@ -63,7 +63,7 @@ const Content = () => {
       const dataRef = ref(database, "sensors/");
       await update(dataRef, { enable: !sensorData.enable });
       toast.success(
-        `Sensor monitoring ${sensorData.enable ? "disabled" : "enabled"}.`
+        `Sensor monitoring ${sensorData.enable ? "disabled" : "enabled"} SMS.`
       );
     } catch (error) {
       console.error("Error toggling sensor enable state:", error);
