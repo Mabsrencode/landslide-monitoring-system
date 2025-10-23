@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { UseGetResponse } from "@/hooks/useGetResponse";
+import React, { useState, useMemo, useEffect } from "react";
+import { ref, onValue } from "firebase/database";
+import { database } from "@/lib/firebase/firebase-client";
 import { formatDateTime } from "@/utils/formatDateTime";
 import GlobalSpinningLoader from "@/components/reusable/SpinnerLoader/GlobalSpinningLoader";
 import {
@@ -24,11 +24,11 @@ interface WarningLevel {
 }
 
 export interface RealtimeSensorData {
-  moisture: SensorValue;
-  rain: SensorValue;
-  vibration: SensorValue;
-  warningLevel: WarningLevel;
-  createdAt: string;
+  moisture?: SensorValue;
+  rain?: SensorValue;
+  vibration?: SensorValue;
+  warningLevel?: WarningLevel;
+  createdAt?: string;
 }
 
 const styles = StyleSheet.create({
@@ -44,10 +44,9 @@ const styles = StyleSheet.create({
 
 const filterLogsByRange = (logs: RealtimeSensorData[], range: string) => {
   const now = new Date();
-
   return logs.filter((log) => {
+    if (!log.createdAt) return false;
     const logDate = new Date(log.createdAt);
-
     if (range === "today") {
       return (
         logDate.getFullYear() === now.getFullYear() &&
@@ -55,10 +54,8 @@ const filterLogsByRange = (logs: RealtimeSensorData[], range: string) => {
         logDate.getDate() === now.getDate()
       );
     }
-
     const diffDays =
       (now.getTime() - logDate.getTime()) / (1000 * 60 * 60 * 24);
-
     if (range === "weekly") return diffDays <= 7;
     if (range === "monthly") return diffDays <= 30;
     return true;
@@ -76,9 +73,8 @@ const SensorReportPDF = ({
 }) => {
   const avg = (field: NumericField) => {
     const values = logs
-      .map((l) => l[field].value)
+      .map((l) => l[field]?.value)
       .filter((v): v is number => typeof v === "number");
-
     return values.length
       ? (values.reduce((a, b) => a + b, 0) / values.length).toFixed(2)
       : "N/A";
@@ -90,19 +86,16 @@ const SensorReportPDF = ({
         <Text style={styles.title}>
           Landslide Monitoring System — Sensor Report ({range.toUpperCase()})
         </Text>
-
         <View style={styles.section}>
           <Text>Generated on: {new Date().toLocaleString()}</Text>
           <Text>Total Logs: {logs.length}</Text>
         </View>
-
         <View style={styles.summary}>
           <Text>📊 Summary:</Text>
           <Text>• Avg Moisture: {avg("moisture")}</Text>
           <Text>• Avg Rain: {avg("rain")}</Text>
           <Text>• Avg Vibration: {avg("vibration")}</Text>
         </View>
-
         <View style={[styles.section, { marginTop: 20 }]}>
           <View style={styles.tableHeader}>
             <Text style={[styles.cell, styles.bold]}>Moisture</Text>
@@ -112,15 +105,20 @@ const SensorReportPDF = ({
             <Text style={[styles.cell, styles.bold]}>Message</Text>
             <Text style={[styles.cell, styles.bold]}>Created At</Text>
           </View>
-
           {logs.map((log, idx) => (
             <View style={styles.tableRow} key={idx}>
-              <Text style={styles.cell}>{log.moisture.value}</Text>
-              <Text style={styles.cell}>{log.rain.value}</Text>
-              <Text style={styles.cell}>{log.vibration.value}</Text>
-              <Text style={styles.cell}>{log.warningLevel.color}</Text>
-              <Text style={styles.cell}>{log.warningLevel.message}</Text>
-              <Text style={styles.cell}>{formatDateTime(log.createdAt)}</Text>
+              <Text style={styles.cell}>{log.moisture?.value ?? "N/A"}</Text>
+              <Text style={styles.cell}>{log.rain?.value ?? "N/A"}</Text>
+              <Text style={styles.cell}>{log.vibration?.value ?? "N/A"}</Text>
+              <Text style={styles.cell}>
+                {log.warningLevel?.color ?? "N/A"}
+              </Text>
+              <Text style={styles.cell}>
+                {log.warningLevel?.message ?? "N/A"}
+              </Text>
+              <Text style={styles.cell}>
+                {log.createdAt ? formatDateTime(log.createdAt) : "N/A"}
+              </Text>
             </View>
           ))}
         </View>
@@ -130,21 +128,49 @@ const SensorReportPDF = ({
 };
 
 const SensorLogsTable = () => {
-  const [reportRange, setReportRange] = useState<"weekly" | "monthly">(
-    "weekly"
-  );
+  const [reportRange, setReportRange] = useState<
+    "today" | "weekly" | "monthly"
+  >("today");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
+  const [sensorHistoryLogs, setSensorHistoryLogs] = useState<
+    RealtimeSensorData[]
+  >([]);
+  const [isLoadingSensorHistoryLogs, setIsLoadingSensorHistoryLogs] =
+    useState(true);
+  const [errorSensorHistoryLogs, setErrorSensorHistoryLogs] =
+    useState<Error | null>(null);
 
-  const {
-    data: sensorHistoryLogs,
-    isPending: isLoadingSensorHistoryLogs,
-    error: errorSensorHistoryLogs,
-  } = useQuery<RealtimeSensorData[] | null>({
-    queryKey: ["sensor-history"],
-    queryFn: async () => UseGetResponse("/api/monitor/sensor-history"),
-  });
-  console.log(sensorHistoryLogs);
+  useEffect(() => {
+    const dataRef = ref(database, "sensorsHistory/");
+    const unsubscribe = onValue(
+      dataRef,
+      (snapshot) => {
+        const data = snapshot.val();
+        if (!data) {
+          setSensorHistoryLogs([]);
+          setIsLoadingSensorHistoryLogs(false);
+          return;
+        }
+        const formatted = Object.values(data).map((item: any) => ({
+          ...item,
+        })) as RealtimeSensorData[];
+        formatted.sort(
+          (a, b) =>
+            new Date(b.createdAt || 0).getTime() -
+            new Date(a.createdAt || 0).getTime()
+        );
+        setSensorHistoryLogs(formatted);
+        setIsLoadingSensorHistoryLogs(false);
+      },
+      (error) => {
+        console.error("Error fetching Realtime Database data:", error);
+        setErrorSensorHistoryLogs(error);
+        setIsLoadingSensorHistoryLogs(false);
+      }
+    );
+    return () => unsubscribe();
+  }, []);
 
   const filteredLogs = useMemo(() => {
     if (!sensorHistoryLogs) return [];
@@ -153,7 +179,6 @@ const SensorLogsTable = () => {
 
   const totalLogs = filteredLogs.length;
   const totalPages = Math.ceil(totalLogs / pageSize);
-
   const currentLogs = filteredLogs.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
@@ -208,20 +233,21 @@ const SensorLogsTable = () => {
             <h2 className="text-lg font-semibold text-gray-800">
               Sensor Logs Report
             </h2>
-
             <div className="flex gap-2 items-center">
               <select
                 value={reportRange}
                 onChange={(e) => {
-                  setReportRange(e.target.value as "weekly" | "monthly");
+                  setReportRange(
+                    e.target.value as "today" | "weekly" | "monthly"
+                  );
                   setCurrentPage(1);
                 }}
                 className="px-3 py-2 border rounded-md text-sm border-accent"
               >
+                <option value="today">Today</option>
                 <option value="weekly">Weekly</option>
                 <option value="monthly">Monthly</option>
               </select>
-
               <PDFDownloadLink
                 document={
                   <SensorReportPDF logs={filteredLogs} range={reportRange} />
@@ -264,26 +290,34 @@ const SensorLogsTable = () => {
                       className="border bg-gray-50 border-gray-300"
                     >
                       <td className="px-6 py-4 font-medium text-black whitespace-nowrap">
-                        {sensor.moisture.value ?? "N/A"}
+                        {sensor.moisture?.value ?? "N/A"}
                       </td>
                       <td className="px-6 py-4">
-                        {sensor.rain.value ?? "N/A"}
+                        {sensor.rain?.value ?? "N/A"}
                       </td>
                       <td className="px-6 py-4 capitalize">
-                        {sensor.vibration.value ?? "N/A"}
+                        {sensor.vibration?.value ?? "N/A"}
                       </td>
                       <td className="px-6 py-4 capitalize">
                         <span
-                          className={`px-2 py-1 rounded text-black bg-${sensor.warningLevel.color}-500`}
+                          className={`px-2 py-1 rounded text-black ${
+                            sensor.warningLevel?.color
+                              ? `bg-${sensor.warningLevel.color
+                                  .toLowerCase()
+                                  .replace(" ", "-")}-500`
+                              : "bg-gray-300"
+                          }`}
                         >
-                          {sensor.warningLevel.color}
+                          {sensor.warningLevel?.color ?? "N/A"}
                         </span>
                       </td>
                       <td className="px-6 py-4 capitalize">
-                        {sensor.warningLevel.message}
+                        {sensor.warningLevel?.message ?? "N/A"}
                       </td>
                       <td className="px-6 py-4">
-                        {formatDateTime(sensor.createdAt)}
+                        {sensor.createdAt
+                          ? formatDateTime(sensor.createdAt)
+                          : "N/A"}
                       </td>
                     </tr>
                   ))
@@ -310,7 +344,6 @@ const SensorLogsTable = () => {
               >
                 Prev
               </button>
-
               {generatePageNumbers().map((page, idx) =>
                 page === "..." ? (
                   <span key={idx} className="px-3 py-1 text-gray-500 text-sm">
@@ -330,7 +363,6 @@ const SensorLogsTable = () => {
                   </button>
                 )
               )}
-
               <button
                 className="px-3 py-1 rounded bg-gray-200 disabled:opacity-50 text-sm"
                 onClick={() =>
