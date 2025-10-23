@@ -245,7 +245,7 @@ const Content = () => {
                       {noOfUsers?.data?.length}
                     </div>
                   )}
-                  <h3 className="text-2xl manrope">No of Users</h3>
+                  <h3 className="text-2xl manrope">No of Residents</h3>
                 </div>
               </li>
             </ul>
