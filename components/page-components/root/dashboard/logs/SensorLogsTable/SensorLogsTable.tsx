@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
-import { ref, onValue } from "firebase/database";
+import { ref, onValue, DataSnapshot } from "firebase/database";
 import { database } from "@/lib/firebase/firebase-client";
 import { formatDateTime } from "@/utils/formatDateTime";
 import GlobalSpinningLoader from "@/components/reusable/SpinnerLoader/GlobalSpinningLoader";
@@ -35,14 +35,17 @@ const styles = StyleSheet.create({
   page: { padding: 30, fontSize: 12, fontFamily: "Helvetica" },
   title: { fontSize: 18, textAlign: "center", marginBottom: 20 },
   section: { marginBottom: 10 },
-  tableHeader: { flexDirection: "row", borderBottom: 1, marginBottom: 4 },
-  tableRow: { flexDirection: "row", borderBottom: 0.5 },
+  tableHeader: { flexDirection: "row", borderBottomWidth: 1, marginBottom: 4 },
+  tableRow: { flexDirection: "row", borderBottomWidth: 0.5 },
   cell: { flex: 1, padding: 4 },
   bold: { fontWeight: "bold" },
   summary: { marginTop: 15, fontSize: 12 },
 });
 
-const filterLogsByRange = (logs: RealtimeSensorData[], range: string) => {
+const filterLogsByRange = (
+  logs: RealtimeSensorData[],
+  range: "today" | "weekly" | "monthly"
+): RealtimeSensorData[] => {
   const now = new Date();
   return logs.filter((log) => {
     if (!log.createdAt) return false;
@@ -64,14 +67,11 @@ const filterLogsByRange = (logs: RealtimeSensorData[], range: string) => {
 
 type NumericField = "moisture" | "rain" | "vibration";
 
-const SensorReportPDF = ({
-  logs,
-  range,
-}: {
+const SensorReportPDF: React.FC<{
   logs: RealtimeSensorData[];
-  range: string;
-}) => {
-  const avg = (field: NumericField) => {
+  range: "today" | "weekly" | "monthly";
+}> = ({ logs, range }) => {
+  const avg = (field: NumericField): string => {
     const values = logs
       .map((l) => l[field]?.value)
       .filter((v): v is number => typeof v === "number");
@@ -86,16 +86,19 @@ const SensorReportPDF = ({
         <Text style={styles.title}>
           Landslide Monitoring System — Sensor Report ({range.toUpperCase()})
         </Text>
+
         <View style={styles.section}>
           <Text>Generated on: {new Date().toLocaleString()}</Text>
           <Text>Total Logs: {logs.length}</Text>
         </View>
+
         <View style={styles.summary}>
           <Text>📊 Summary:</Text>
           <Text>• Avg Moisture: {avg("moisture")}</Text>
           <Text>• Avg Rain: {avg("rain")}</Text>
           <Text>• Avg Vibration: {avg("vibration")}</Text>
         </View>
+
         <View style={[styles.section, { marginTop: 20 }]}>
           <View style={styles.tableHeader}>
             <Text style={[styles.cell, styles.bold]}>Moisture</Text>
@@ -126,8 +129,7 @@ const SensorReportPDF = ({
     </Document>
   );
 };
-
-const SensorLogsTable = () => {
+const SensorLogsTable: React.FC = () => {
   const [reportRange, setReportRange] = useState<
     "today" | "weekly" | "monthly"
   >("today");
@@ -145,21 +147,23 @@ const SensorLogsTable = () => {
     const dataRef = ref(database, "sensorsHistory/");
     const unsubscribe = onValue(
       dataRef,
-      (snapshot) => {
-        const data = snapshot.val();
+      (snapshot: DataSnapshot) => {
+        const data = snapshot.val() as Record<
+          string,
+          RealtimeSensorData
+        > | null;
         if (!data) {
           setSensorHistoryLogs([]);
           setIsLoadingSensorHistoryLogs(false);
           return;
         }
-        const formatted = Object.values(data).map((item: any) => ({
-          ...item,
-        })) as RealtimeSensorData[];
-        formatted.sort(
+
+        const formatted = Object.values(data).sort(
           (a, b) =>
-            new Date(b.createdAt || 0).getTime() -
-            new Date(a.createdAt || 0).getTime()
+            new Date(b.createdAt ?? 0).getTime() -
+            new Date(a.createdAt ?? 0).getTime()
         );
+
         setSensorHistoryLogs(formatted);
         setIsLoadingSensorHistoryLogs(false);
       },
@@ -169,13 +173,14 @@ const SensorLogsTable = () => {
         setIsLoadingSensorHistoryLogs(false);
       }
     );
+
     return () => unsubscribe();
   }, []);
 
-  const filteredLogs = useMemo(() => {
-    if (!sensorHistoryLogs) return [];
-    return filterLogsByRange(sensorHistoryLogs, reportRange);
-  }, [sensorHistoryLogs, reportRange]);
+  const filteredLogs = useMemo(
+    () => filterLogsByRange(sensorHistoryLogs, reportRange),
+    [sensorHistoryLogs, reportRange]
+  );
 
   const totalLogs = filteredLogs.length;
   const totalPages = Math.ceil(totalLogs / pageSize);
@@ -184,7 +189,7 @@ const SensorLogsTable = () => {
     currentPage * pageSize
   );
 
-  const generatePageNumbers = () => {
+  const generatePageNumbers = (): (number | string)[] => {
     const pages: (number | string)[] = [];
     if (totalPages <= 7) {
       for (let i = 1; i <= totalPages; i++) pages.push(i);
@@ -216,12 +221,13 @@ const SensorLogsTable = () => {
     return pages;
   };
 
-  if (errorSensorHistoryLogs)
+  if (errorSensorHistoryLogs) {
     return (
       <div className="text-center text-red-500 font-semibold mt-6">
         {errorSensorHistoryLogs.message}
       </div>
     );
+  }
 
   return (
     <>
@@ -248,25 +254,27 @@ const SensorLogsTable = () => {
                 <option value="weekly">Weekly</option>
                 <option value="monthly">Monthly</option>
               </select>
-              <PDFDownloadLink
-                document={
-                  <SensorReportPDF logs={filteredLogs} range={reportRange} />
-                }
-                fileName={`sensor-report-${reportRange}.pdf`}
-                className={`px-4 py-2 rounded text-sm transition ${
-                  filteredLogs.length > 0
-                    ? "bg-secondary text-white hover:bg-secondary/80"
-                    : "bg-gray-300 text-gray-600 cursor-not-allowed"
-                }`}
-              >
-                {({ loading }) =>
-                  loading
-                    ? "Generating PDF..."
-                    : filteredLogs.length > 0
-                    ? "Export PDF"
-                    : "No Data"
-                }
-              </PDFDownloadLink>
+
+              {filteredLogs.length > 0 ? (
+                <PDFDownloadLink
+                  document={
+                    <SensorReportPDF logs={filteredLogs} range={reportRange} />
+                  }
+                  fileName={`sensor-report-${reportRange}.pdf`}
+                  className="px-4 py-2 rounded text-sm bg-secondary text-white hover:bg-secondary/80 transition"
+                >
+                  {({ loading }) =>
+                    loading ? "Generating PDF..." : "Export PDF"
+                  }
+                </PDFDownloadLink>
+              ) : (
+                <button
+                  disabled
+                  className="px-4 py-2 rounded text-sm bg-gray-300 text-gray-600 cursor-not-allowed"
+                >
+                  No Data
+                </button>
+              )}
             </div>
           </div>
 
@@ -283,7 +291,7 @@ const SensorLogsTable = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentLogs && currentLogs.length > 0 ? (
+                {currentLogs.length > 0 ? (
                   currentLogs.map((sensor, index) => (
                     <tr
                       key={index}
@@ -295,23 +303,15 @@ const SensorLogsTable = () => {
                       <td className="px-6 py-4">
                         {sensor.rain?.value ?? "N/A"}
                       </td>
-                      <td className="px-6 py-4 capitalize">
+                      <td className="px-6 py-4">
                         {sensor.vibration?.value ?? "N/A"}
                       </td>
-                      <td className="px-6 py-4 capitalize">
-                        <span
-                          className={`px-2 py-1 rounded text-black ${
-                            sensor.warningLevel?.color
-                              ? `bg-${sensor.warningLevel.color
-                                  .toLowerCase()
-                                  .replace(" ", "-")}-500`
-                              : "bg-gray-300"
-                          }`}
-                        >
+                      <td className="px-6 py-4">
+                        <span className="px-2 py-1 rounded text-black bg-gray-200">
                           {sensor.warningLevel?.color ?? "N/A"}
                         </span>
                       </td>
-                      <td className="px-6 py-4 capitalize">
+                      <td className="px-6 py-4">
                         {sensor.warningLevel?.message ?? "N/A"}
                       </td>
                       <td className="px-6 py-4">
