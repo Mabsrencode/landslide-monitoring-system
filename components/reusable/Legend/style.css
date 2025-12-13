@@ -1,6 +1,4 @@
-.legend-containe:hover{
-    }
-    .details{
+ .details{
         z-index: 1000;
         position: absolute;
         bottom: -100%;
