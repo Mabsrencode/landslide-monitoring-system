@@ -144,6 +144,9 @@ export default function Map({
 
   return (
     <>
+      <div className="mb-8">
+        <Legend />
+      </div>
       {user && user.role === "admin" && (
         <div className="grid gap-2 mb-3 p-2 bg-primary/5 rounded-lg border border-accent/20">
           <div className="flex items-center gap-2">
@@ -274,8 +277,6 @@ export default function Map({
           }}
         />
       </MapContainer>
-
-      <Legend />
     </>
   );
 }

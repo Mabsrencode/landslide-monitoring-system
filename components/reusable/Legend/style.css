@@ -1,0 +1,25 @@
+.legend-containe:hover{
+    }
+    .details{
+        z-index: 1000;
+        position: absolute;
+        bottom: -100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #fff;
+        padding: 8px;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        width: max-content;
+        max-width: 200px;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease, bottom 0.3s ease;
+        font-size: 12px;
+        font-family: var(--font-sans);
+    }
+    .legend-container:hover .details{
+        bottom: calc(-100% - 10px);
+        opacity: 1;
+        visibility: visible;
+}
