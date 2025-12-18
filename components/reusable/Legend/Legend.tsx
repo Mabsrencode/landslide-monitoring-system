@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import "./style.css"
 const Legend = () => {
-  const [toggle, setToggle] = useState(false);
 
   const legendData: { color: string; label: string; sensor: string; threshold: string }[] = [
     { color: "bg-green-500", label: "Stable (No risk detected)", sensor: "All", threshold: "Below thresholds" },
