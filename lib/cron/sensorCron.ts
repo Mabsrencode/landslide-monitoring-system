@@ -208,8 +208,8 @@ export function startSensorCron() {
           .replace(" ", "");
 
         const alertMessages = {
-          ORANGE: `Bantay Landslide (${formattedDate}): Orange Warning Alert - High risk of landslide due to heavy rainfall and unstable soil. Affected Area: ${zoneName} Be prepared for possible evacuation and avoid landslide-prone areas.`,
-          RED: `Bantay Landslide (${formattedDate}): Red Warning Alert - Very high risk of landslide!, Affected Area: ${zoneName}, Immediate evacuation required. Do not stay in landslide-prone areas.`,
+          ORANGE: `Orange Warning Alert - High risk of landslide due to heavy rainfall and unstable soil. Affected Area: ${zoneName} Be prepared for possible evacuation and avoid landslide-prone areas.`,
+          RED: `Red Warning Alert - Very high risk of landslide!, Affected Area: ${zoneName}, Immediate evacuation required. Do not stay in landslide-prone areas.`,
         };
 
         await setDoc(doc(db, "incidents", uuidv4()), {
