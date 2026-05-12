@@ -1,8 +1,29 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+## Installation
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+ (LTS recommended)
+- npm, yarn, pnpm, or bun
+
+### Install dependencies
+
+Choose one package manager and stick to it:
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+# or
+bun install
+```
+
+## Running the project
+
+### Development
 
 ```bash
 npm run dev
@@ -14,7 +35,47 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### Production build
+
+```bash
+npm run build
+npm run start
+# or
+yarn build
+yarn start
+# or
+pnpm build
+pnpm start
+# or
+bun run build
+bun run start
+```
+
+### Linting
+
+```bash
+npm run lint
+# or
+yarn lint
+# or
+pnpm lint
+# or
+bun run lint
+```
+
+## Configuration
+
+If the project requires environment variables, copy any example file and update values:
+
+```bash
+cp .env.example .env.local
+```
+
+If there is no .env.example, ask the team for the required variables or check the deployment settings.
+
+## Editing
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
